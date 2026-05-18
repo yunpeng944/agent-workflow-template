@@ -1,0 +1,23 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Local environment overrides
+.env
+.env.local
+
+# 模板不带 package.json，但下游 fork 后可能加 Node 依赖
+node_modules/
+
+# 注意：.claude/skills/ 与 .agents/skills/ 是 generated mirror，**入仓**——
+# 由 `./tasks.sh sync-skills` 生成，与源仓行为一致，**不**写进 .gitignore。
+
+# wf-* skill 可选 run dir（编排过程产物，按需启用）
+.wf-runs/

@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "expectedHeadings": [
+    "项目目标",
+    "优先做什么",
+    "边界三层",
+    "最小流程",
+    "工作流入口",
+    "Adapter 调度",
+    "项目特定规则",
+    "快速定位"
+  ],
+  "sectionLineLimits": {
+    "项目目标": 12,
+    "优先做什么": 10,
+    "边界三层": 24,
+    "最小流程": 8,
+    "工作流入口": 8,
+    "Adapter 调度": 8,
+    "项目特定规则": 12,
+    "快速定位": 12
+  },
+  "knownPrefixes": [
+    "skills/",
+    "adapters/",
+    "docs/",
+    "tools/",
+    "prompts/",
+    "governance-snippets/",
+    ".claude/",
+    ".agents/"
+  ],
+  "runtimePrefixes": [],
+  "generatedPrefixes": [],
+  "intentionallyAbsentRefs": [],
+  "mirrorRoots": [".claude/skills", ".agents/skills"],
+  "scanExcludeDirs": []
+}
