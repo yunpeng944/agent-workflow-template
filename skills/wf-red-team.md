@@ -17,7 +17,7 @@ user-invocable: true
 - **role slots**: PLANNER / IMPLEMENTER / RED-TEAMER
 - **evaluator stage**: Stage 3 (RED-TEAMER) 永远 fresh subagent；input 仅含 STAGE-1 PLAN + STAGE-2 DIFF，**不含** STAGE-2 SUMMARY
 - **特有约束**: Stage 3 红队视角（不奖励防御充分性、只输出"我能怎么让它出事"）；Stage 4 每 🔴 **1:1 配 negative 测试**（红 → 复现攻击；绿 → 攻击被挡）
-- 详细 model 映射 / host-specific routing / worktree 隔离 / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
+- 详细 model 映射 / host-specific routing / worktree 隔离 / 调度执行约束 / dispatch ledger / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
 
 **调用语法**：`/wf-red-team [preset] [--mode=<simplification>] <task>`
 
@@ -56,7 +56,7 @@ user-invocable: true
 8. **Phase 分解**：每 Phase 改动文件 / 并发可能 / 独立验证命令
 9. **风险点** ≤ 3 条按可能性排序，**含残留风险**（修完后仍存在但已知/可接受的）
 10. 自审 3 条：规格覆盖 / 类型一致性 / 路径一致性
-11. 验收链回 `./tasks.sh validate`（必要时加 test / typecheck / lint:agents / check:refs）
+11. 验收链回 `./tasks.sh validate`（必要时加项目自定 test / typecheck）
 
 不引入"运行时绕过 / feature flag 兜底"妥协路径。
 

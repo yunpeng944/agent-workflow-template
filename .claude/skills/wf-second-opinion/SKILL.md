@@ -19,7 +19,7 @@ user-invocable: true
 - **role slots**: DIAGNOSER-A (Stage 1) / DIAGNOSER-B (Stage 2，与 A 平行) / RECONCILER (Stage 3，从未参与 Stage 1/2)
 - **evaluator stage**: 三 stage 全部 fresh subagent；Stage 1/2 平行 dispatch 互不可见；Stage 3 第三个独立 fresh subagent
 - **特有约束**: input **字符级一致**（建议固化为 fixture 文件，两 dispatch 共用）；Blind Spots 不许写"无"；**同产品 preset 警告在 Stage 1 dispatch 前打印**（`claude-claude` / `codex-codex` 下双盲仅靠 session 隔离，丢失跨厂商多样性）
-- 详细 model 映射 / host-specific routing / worktree 隔离 / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
+- 详细 model 映射 / host-specific routing / worktree 隔离 / 调度执行约束 / dispatch ledger / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
 
 **调用语法**：`/wf-second-opinion [preset] [--mode=<simplification>] <task>`
 

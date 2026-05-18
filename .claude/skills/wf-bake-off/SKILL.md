@@ -19,7 +19,7 @@ user-invocable: true
 - **role slots**: CRITERIA-LOCKER (Stage 1) / PROTOTYPER (Stage 2，A/B 各 dispatch 一次同 model 独立 subagent) / SCORER (Stage 3)
 - **evaluator stage**: Stage 2 PROTOTYPER A/B 互为 evaluator 平行 dispatch；Stage 3 SCORER fresh subagent，严格按 Stage 1 criteria 禁止 invent 新维度
 - **特有约束**: **判据冻结**（Stage 1 完后不许回改，除非 Hard Constraint 漏写要 version bump + 重跑相关测量）；**A/B prompt 字符级一致**（同 fixture，仅末尾 `[CANDIDATE_NAME]` 占位符替换）；**SCORER 评分只用 raw metrics + proxy 证据**，Implementation Summary / Caveats 是上下文不是评分依据；**同产品 preset 警告在 Stage 2 dispatch 前打印**（Stage 1 仅锁判据不依赖跨厂商）
-- 详细 model 映射 / host-specific routing / worktree 隔离 / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
+- 详细 model 映射 / host-specific routing / worktree 隔离 / 调度执行约束 / dispatch ledger / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
 
 **调用语法**：`/wf-bake-off [preset] [--mode=<simplification>] <task>`
 

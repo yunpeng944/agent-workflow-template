@@ -19,7 +19,7 @@ user-invocable: true
 - **role slots**: PLANNER / IMPLEMENTER / REVIEWER
 - **evaluator stage**: Stage 3 (REVIEWER) 永远 fresh subagent；input 仅含 STAGE-1 PLAN + STAGE-2 DIFF，**不含** STAGE-2 SUMMARY
 - **特有约束**: Phase B / Stage 4 中发现 adjacent 改动超方案写入集 → 标 **SCOPE-EXPANSION**，停等用户裁定
-- 详细 model 映射 / host-specific routing / worktree 隔离 / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
+- 详细 model 映射 / host-specific routing / worktree 隔离 / 调度执行约束 / dispatch ledger / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
 
 **调用语法**：`/wf-coding-relay [preset] [--mode=<simplification>] <task>`
 

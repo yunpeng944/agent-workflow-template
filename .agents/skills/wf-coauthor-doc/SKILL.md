@@ -10,7 +10,7 @@ user-invocable: true
 
 ## Goal
 
-治理 / 规则型文档（AGENTS.md、子 AGENTS.md、SKILL.md、system prompt、governance / contract doc）的起草或大改拆成 **PLANNER → AUDITOR → FINALIZER 接力 3 段**：PLANNER 写初稿（元规则 + 边界 + 锚点 + anti-skip） → AUDITOR 严苛校验（可执行 / 可判定 / 可定位 / 内部一致）→ FINALIZER 综合 audit 出 commit-ready 文本。核心差异于 `wf-coding-relay`：**没有实现 / 测试 / diff 阶段**——文档本身就是产物，校验靠 `./tasks.sh validate`（含 `lint:agents` / `check:refs` / `sync:skills --check`）+ 人读。**另一核心差异**：Stage 3 (FINALIZER) **故意读** Stage 2 (AUDITOR) 输出——文档润色需要 audit 意见做依据。
+治理 / 规则型文档（AGENTS.md、子 AGENTS.md、SKILL.md、system prompt、governance / contract doc）的起草或大改拆成 **PLANNER → AUDITOR → FINALIZER 接力 3 段**：PLANNER 写初稿（元规则 + 边界 + 锚点 + anti-skip） → AUDITOR 严苛校验（可执行 / 可判定 / 可定位 / 内部一致）→ FINALIZER 综合 audit 出 commit-ready 文本。核心差异于 `wf-coding-relay`：**没有实现 / 测试 / diff 阶段**——文档本身就是产物，校验靠 `./tasks.sh validate`（含 `check-structure` / `check-refs` / `sync-skills-check`）+ 人读。**另一核心差异**：Stage 3 (FINALIZER) **故意读** Stage 2 (AUDITOR) 输出——文档润色需要 audit 意见做依据。
 
 ## Orchestration
 
@@ -18,8 +18,8 @@ user-invocable: true
 - **调度优先级**：CLI (`claude -p` / `codex exec`) → host subagent (Claude Code `general-purpose` / `codex:codex-rescue`) → fail-fast
 - **role slots**: PLANNER / AUDITOR / FINALIZER
 - **evaluator stage**: Stage 2 (AUDITOR) fresh subagent；**Stage 3 (FINALIZER) 例外**——fresh subagent 但 input **必含** STAGE-2 AUDIT（文档润色需 audit 意见做依据）
-- **特有约束**: 不验代码（产物即文档）；目标在 `skills/<name>.md` 时终稿后**必须先**跑 `./tasks.sh sync-skills` 重生镜像再 commit，否则 `./tasks.sh validate` 中的 `sync:skills --check` 必失败
-- 详细 model 映射 / host-specific routing / worktree 隔离 / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
+- **特有约束**: 不验代码（产物即文档）；目标在 `skills/<name>.md` 时终稿后**必须先**跑 `./tasks.sh sync-skills` 重生镜像再 commit，否则 `./tasks.sh validate` 中的 `sync-skills-check` 必失败
+- 详细 model 映射 / host-specific routing / worktree 隔离 / 调度执行约束 / dispatch ledger / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
 
 **调用语法**：`/wf-coauthor-doc [preset] [--mode=<simplification>] <task>`
 
@@ -103,7 +103,7 @@ user-invocable: true
    - 列**与上层冲突**的条目 → 🔴 必明示优先级或撤回
 
 5. **可机械校验执行**：
-   - **草稿落盘策略**：把 Stage 1 草稿写入目标路径（在 worktree 或临时 branch，避免污染 main）；若目标是 `skills/<name>.md`，**必须先跑 `./tasks.sh sync-skills`** 重生镜像，否则 `./tasks.sh validate` 中的 `sync:skills --check` 必失败
+   - **草稿落盘策略**：把 Stage 1 草稿写入目标路径（在 worktree 或临时 branch，避免污染 main）；若目标是 `skills/<name>.md`，**必须先跑 `./tasks.sh sync-skills`** 重生镜像，否则 `./tasks.sh validate` 中的 `sync-skills-check` 必失败
    - 跑 `./tasks.sh check-structure` + `./tasks.sh check-refs` + `./tasks.sh validate`（收口）
    - 记每条命令退出码 + 错误清单 + root cause + 修复建议
    - 说明 working tree 处置建议（保留供 Stage 3 改写 / `git restore` 丢弃）
@@ -138,6 +138,8 @@ user-invocable: true
 ```
 
 约束：不重写草稿、不擅自重排结构；若发现需结构性改动，标 🔴 在 Stage 3 prompt 中说明让 FINALIZER 决定。
+
+audit-only 模式：`STAGE-1 DRAFT` 块填目标文件当前内容，块首标 `# Target: <path>`；设计说明可写"既有文本审计"或省略。
 
 ```
 ===== BEGIN STAGE-1 DRAFT =====
@@ -182,7 +184,7 @@ SCOPE-EXPANSION (如有): 内容 + why
 ===== BEGIN STAGE-3 VERIFICATION-PLAN =====
 写入路径: [path]
 若路径是 skills/<name>.md: 先跑 `./tasks.sh sync-skills` 重生镜像，再继续
-验证命令: `./tasks.sh validate`（收口；含 lint:agents / check:refs / sync:skills --check / 其他）
+验证命令: `./tasks.sh validate`（收口；含 `check-structure` / `check-refs` / `sync-skills-check` / 其他）
 期望退出码: 0
 失败回退: 按 audit 第 5 节"机械校验" root cause 定位；不通过则回 Stage 3 修订（非 Stage 1）
 ===== END STAGE-3 VERIFICATION-PLAN =====
@@ -212,7 +214,7 @@ SCOPE-EXPANSION (如有): 内容 + why
 ## Simplification
 
 - **`full-coauthor`**：3 阶段（默认）。新建文档 / 大改 / 跨层级重组
-- **`audit-only`**：跳 Stage 1，从既有文本起步跑 Stage 2 审计，Stage 3 润色。适用：小幅改动（< 30 行、单段内）
+- **`audit-only`**：跳 Stage 1，从既有文本起步跑 Stage 2 审计，Stage 3 润色。适用：小幅改动（< 30 行、单段内）。Stage 2 的 `STAGE-1 DRAFT` 块填目标文件当前内容，并在块首标 `# Target: <path>`；设计说明可写"既有文本审计"或省略。
 - **`mechanical-fix`**：直接改 + 跑 `./tasks.sh validate`（目标在 `skills/<name>.md` 时记得先 `./tasks.sh sync-skills`）。适用：typo / 错锚点 / 单行修订
 
 降级 3 维度：**规模**（< 30 行 + 单段 → audit-only）/ **是否新建**（新建 / 替换 → 必须 full-coauthor）/ **是否动元规则**（动元规则 / 边界 / anti-skip → 必须 full-coauthor，缺起草上下文不可走 audit-only）。

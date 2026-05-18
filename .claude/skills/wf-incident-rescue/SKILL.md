@@ -19,7 +19,7 @@ user-invocable: true
 - **role slots**: REPRODUCER (Stage 1) / BISECTOR (Stage 2) / FIX-DESIGNER (Stage 3) / FIX-IMPLEMENTER (Stage 4)
 - **evaluator stage**: Stage 3 (FIX-DESIGNER) fresh subagent；input = STAGE-1 REPRODUCTION + STAGE-2 BISECT-RESULT（含 diff），**不**含 REPRODUCER / BISECTOR self-narrative。**例外**：Stage 1 (REPRODUCER) 与 Stage 2 (BISECTOR) **可同一 session 复用**——因 BISECTOR 需 REPRODUCER 累积的信息（reproducer 脚本路径、known-good anchor、failure mode），强制 fresh 反而损失
 - **特有约束**: 复现优先（Stage 1 不许跳，BLOCKED 时必须给 ≥ 3 条退路 hint）；reproducer 脚本必须放**git tree 外**（避免 bisect checkout 换掉）；**Worktree 隔离必需**——`git bisect` 切换 working tree，CLI 路径**必须**独立 `git worktree add` 内跑；四态 Decision（FORWARD-FIX / REVERT / REVERT-WITH-CHERRY-PICK / PARTIAL-REVERT-PLUS-FORWARD-FIX）；所有 Decision 分支都跑**三项 PASS**（Stage 1 reproducer 转绿 + Stage 3 negative test + `./tasks.sh validate`）
-- 详细 model 映射 / host-specific routing / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
+- 详细 model 映射 / host-specific routing / 调度执行约束 / dispatch ledger / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
 
 **调用语法**：`/wf-incident-rescue [preset] [--mode=<simplification>] <task>`（task 建议含 failing test name / CI URL / 错误消息 / 最近 known-good）
 

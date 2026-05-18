@@ -17,7 +17,7 @@ user-invocable: true
 - **role slots**: PLANNER (Stage 1 一次性产 batch plan) / IMPLEMENTER (每批 Stage 2, 4) / REVIEWER (每批 Stage 3)
 - **evaluator stage**: 每批 Stage 3 (REVIEWER) dispatch fresh subagent；input 仅含 STAGE-1 PLAN + 本批 STAGE-2 DIFF + STAGE-2 INVARIANTS-REPORT，**绝不**含 STAGE-2 SUMMARY 的 self-narrative
 - **特有约束**: 每批 Stage 4 收口后才 commit（Stage 2/3 期间留 working tree）；**INVARIANTS 必须机械可校验**（diff 型 reviewer 自判 + 命令型信 Stage 2 退出码）；BATCH ABORT/REWORK 时**丢 working tree** 不 git revert（commit 未发生）；跨批 follow-up 用 `DEFERRED-TO-BATCH-X` 标记；**Worktree 隔离每批一个** `git worktree add`，避免跨批污染
-- 详细 model 映射 / host-specific routing / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
+- 详细 model 映射 / host-specific routing / 调度执行约束 / dispatch ledger / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
 
 **调用语法**：`/wf-convoy-refactor [preset] [--mode=<simplification>] <task>`
 
