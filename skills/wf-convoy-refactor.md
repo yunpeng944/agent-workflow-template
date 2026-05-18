@@ -12,7 +12,7 @@ user-invocable: true
 
 ## Orchestration
 
-- **5 preset (默认 claude-codex)**：claude-codex / claude-claude / codex-claude / codex-codex / custom (`--planner=<m> --implementer=<m> --reviewer=<m>` 缺任一 fail-fast)
+- **preset**: `<vendor1>-<vendor2>` 按 [docs/workflows.md](../docs/workflows.md) 「Role / Model 映射 / Vendor 字典」节查；默认 `claude-codex`；`custom` (`--planner=<m> --implementer=<m> --reviewer=<m>` 缺任一 fail-fast)
 - **调度优先级**：CLI (`claude -p` / `codex exec`) → host subagent (Claude Code `general-purpose` / `codex:codex-rescue`) → fail-fast
 - **role slots**: PLANNER (Stage 1 一次性产 batch plan) / IMPLEMENTER (每批 Stage 2, 4) / REVIEWER (每批 Stage 3)
 - **evaluator stage**: 每批 Stage 3 (REVIEWER) dispatch fresh subagent；input 仅含 STAGE-1 PLAN + 本批 STAGE-2 DIFF + STAGE-2 INVARIANTS-REPORT，**绝不**含 STAGE-2 SUMMARY 的 self-narrative

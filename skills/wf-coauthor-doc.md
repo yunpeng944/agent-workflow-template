@@ -12,7 +12,7 @@ user-invocable: true
 
 ## Orchestration
 
-- **5 preset (默认 claude-codex)**：claude-codex / claude-claude / codex-claude / codex-codex / custom (`--planner=<m> --auditor=<m> --finalizer=<m>` 缺任一 fail-fast)
+- **preset**: `<vendor1>-<vendor2>` 按 [docs/workflows.md](../docs/workflows.md) 「Role / Model 映射 / Vendor 字典」节查；默认 `claude-codex`；`custom` (`--planner=<m> --auditor=<m> --finalizer=<m>` 缺任一 fail-fast)
 - **调度优先级**：CLI (`claude -p` / `codex exec`) → host subagent (Claude Code `general-purpose` / `codex:codex-rescue`) → fail-fast
 - **role slots**: PLANNER / AUDITOR / FINALIZER
 - **evaluator stage**: Stage 2 (AUDITOR) fresh subagent；**Stage 3 (FINALIZER) 例外**——fresh subagent 但 input **必含** STAGE-2 AUDIT（文档润色需 audit 意见做依据）

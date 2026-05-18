@@ -12,7 +12,7 @@ user-invocable: true
 
 ## Orchestration
 
-- **5 preset (默认 claude-codex)**：claude-codex / claude-claude / codex-claude / codex-codex / custom (`--criteria-locker=<m> --prototyper=<m> --scorer=<m>` 缺任一 fail-fast)
+- **preset**: `<vendor1>-<vendor2>` 按 [docs/workflows.md](../docs/workflows.md) 「Role / Model 映射 / Vendor 字典」节查；默认 `claude-codex`；`custom` (`--criteria-locker=<m> --prototyper=<m> --scorer=<m>` 缺任一 fail-fast)
 - **调度优先级**：CLI (`claude -p` / `codex exec`) → host subagent (Claude Code `general-purpose` / `codex:codex-rescue`) → fail-fast
 - **role slots**: CRITERIA-LOCKER (Stage 1) / PROTOTYPER (Stage 2，A/B 各 dispatch 一次同 model 独立 subagent) / SCORER (Stage 3)
 - **evaluator stage**: Stage 2 PROTOTYPER A/B 互为 evaluator 平行 dispatch；Stage 3 SCORER fresh subagent，严格按 Stage 1 criteria 禁止 invent 新维度

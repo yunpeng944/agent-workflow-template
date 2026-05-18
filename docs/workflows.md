@@ -2,14 +2,16 @@
 
 > 7 个 `wf-*` user-invocable skill 的选择指南与共享机制单点真源。skill 真源在 [skills/](../skills/)，本文件不复制 prompt。
 
-## Role / Model 映射
+## Role / Model 映射 / Vendor 字典
 
-skill 内不写死 model 名；模型分类用 role 描述。模型 → role 推荐映射**单点维护于此**，升级时只改本表，所有 wf-\* skill 不动：
+skill 内不写死具体 model 字符串；preset 不枚举固定 vendor pair 而**按字典查**。vendor key → 推荐 model + 调度入口、role → vendor 段位规则**单点维护于此**，升级 / 新 vendor 接入只改本表，所有 wf-\* skill 不动：
 
-| 当前模型类 | 当前推荐具体 model                 |
-| ---------- | ---------------------------------- |
-| Claude     | Claude Opus 4.7（其次 Sonnet 4.6） |
-| Codex      | OpenAI Codex 1.x / GPT-5.5         |
+| vendor key | 推荐具体 model                     | 调度入口（CLI / host subagent）                                                 |
+| ---------- | ---------------------------------- | ------------------------------------------------------------------------------- |
+| `claude`   | Claude Opus 4.7（其次 Sonnet 4.6） | `claude -p <prompt>` / Claude Code `Agent(subagent_type="general-purpose")`     |
+| `codex`    | OpenAI Codex 1.x / GPT-5.5         | `codex exec <prompt>` / Claude Code `Agent(subagent_type="codex:codex-rescue")` |
+
+**新 vendor 接入**：本表加一行（key + 推荐 model + 入口）即生效。
 
 ## 调度优先级（CLI → host-specific subagent → fail-fast）
 
@@ -33,23 +35,25 @@ skill 内不写死 model 名；模型分类用 role 描述。模型 → role 推
 
 ### 调度执行约束
 
-- preset 是**实际 dispatch 合约**，不是写作视角标签。选择 `claude-codex` / `codex-claude` / `claude-claude` / `codex-codex` 后，必须按上表真实拉起对应 role 的 CLI / host-specific agent；若对应 CLI / agent 不可用、未登录、失败、超时或被中断，必须 fail-fast 并明示，不得用当前模型模拟该 role 的意见。
+- preset 是**实际 dispatch 合约**，不是写作视角标签。选择任意 `<v1>-<v2>` vendor pair（如 `claude-codex` / `codex-claude` / `claude-claude` 等）后，必须按字典真实拉起对应 vendor 的 CLI / host-specific agent；若对应 CLI / agent 不可用、未登录、失败、超时或被中断，必须 fail-fast 并明示，不得用当前模型模拟该 role 的意见。
 - 调度 Claude Code 或 Codex 时必须给足够执行时间；不得因短时间无输出草率中断。没有完善的后台沟通 / 状态回收机制时，优先使用前台同步执行；若使用后台 / agent / 长任务方式，必须持续跟踪最终状态。
 - 收口汇报必须包含 dispatch ledger：每个外部 role 的执行方式、状态（completed / unavailable / failed / timed out / interrupted）和产物来源。没有真实完成的 role 不得写成"Claude 侧意见"或"Codex 侧意见"。
 
 ## Preset Index
 
-slash command 第一位 token（可省，默认 `claude-codex`）：
+slash command 第一位 token 形如 `<vendor1>-<vendor2>`（可省，默认 `claude-codex`）。vendor key 按上节字典查；字典缺项 → **fail-fast** 列出可用 vendor，**不静默 fallback**。
 
-| preset          | 行为                                                                                                                                                                                                            |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `claude-codex`  | 默认。Claude 段（PLANNER/REVIEWER/RED-TEAMER/AUDITOR/FINALIZER/RECONCILER/CRITERIA-LOCKER/SCORER/FIX-DESIGNER/DIAGNOSER-A）+ Codex 段（IMPLEMENTER/PROTOTYPER/REPRODUCER/BISECTOR/FIX-IMPLEMENTER/DIAGNOSER-B） |
-| `claude-claude` | 全 Claude；evaluator stage fresh Claude subagent                                                                                                                                                                |
-| `codex-claude`  | 反向 cross                                                                                                                                                                                                      |
-| `codex-codex`   | 全 Codex                                                                                                                                                                                                        |
-| `custom`        | 显式 `--<role>=<model>` 覆盖该 skill 全部 role；缺任一 → **fail-fast**                                                                                                                                          |
+| preset 形式 | 解析规则                                                               |
+| ----------- | ---------------------------------------------------------------------- |
+| `<v1>-<v2>` | vendor1 跑 A 段 role；vendor2 跑 B 段 role                             |
+| `custom`    | 显式 `--<role>=<model>` 覆盖该 skill 全部 role；缺任一 → **fail-fast** |
 
-**同产品 preset 警告**（仅 `wf-second-opinion` / `wf-bake-off`）：`claude-claude` 或 `codex-codex` 下这两 skill 的独立性仅靠 session 隔离，丢失跨厂商多样性。编排者打印静态警告（不阻塞）。触发时机：second-opinion 在 Stage 1 dispatch 前；bake-off 在 Stage 2 dispatch 前（Stage 1 仅锁判据）。其他 5 个 wf-\* 不触发——独立性靠 role 视角切换 / INVARIANTS 机械校验 / fresh subagent 隔离。
+- **A 段 role 集**（计划 / 评审 / 综合）：PLANNER / REVIEWER / RED-TEAMER / AUDITOR / FINALIZER / RECONCILER / CRITERIA-LOCKER / SCORER / FIX-DESIGNER / DIAGNOSER-A
+- **B 段 role 集**（实现 / 复现 / 二分）：IMPLEMENTER / PROTOTYPER / REPRODUCER / BISECTOR / FIX-IMPLEMENTER / DIAGNOSER-B
+
+**默认 `claude-codex`**：A 段 Claude / B 段 Codex。举例如 `claude-claude` / `codex-codex` / `codex-claude`——所有合法 pair 由字典 N×N 自动生成，**docs / skill 不再枚举**。
+
+**同产品 preset 警告**（仅 `wf-second-opinion` / `wf-bake-off`）：当 `vendor1 == vendor2`（任意同 vendor pair）时，这两 skill 的独立性仅靠 session 隔离，丢失跨厂商多样性。编排者打印静态警告（不阻塞）。触发时机：second-opinion 在 Stage 1 dispatch 前；bake-off 在 Stage 2 dispatch 前。其他 5 个 wf-\* 不触发——独立性靠 role 视角切换 / INVARIANTS 机械校验 / fresh subagent 隔离。
 
 ### simplification × preset 两轴
 
@@ -124,6 +128,7 @@ slash command 第一位 token（可省，默认 `claude-codex`）：
 - `wf-coauthor-doc` 终稿忘跑 `./tasks.sh sync-skills`（skill 类目标）——validate 必失败
 - 跨 wf-\* 复制 prompt 拼新流程——独立性约束 / paste boundary / SCOPE-EXPANSION 是各 skill 设计的一部分，拼接后保护失效
 - 把 `codex-claude` / `claude-codex` 理解成"当前模型模拟另一方视角"，未真实 dispatch 外部 role 就汇总——preset 保护失效；必须 fail-fast 或明确标记缺失角色。
+- preset 解析时 vendor key 不在字典——必须 fail-fast 列出可用 vendor，**不静默 fallback** 到 `claude-codex`；fallback 等于隐式切换 vendor，违反 dispatch 合约
 
 ## 快速定位
 
@@ -131,4 +136,4 @@ slash command 第一位 token（可省，默认 `claude-codex`）：
 - **镜像（generated · 勿改）**：`.claude/skills/wf-*/SKILL.md` · `.agents/skills/wf-*/SKILL.md`
 - **基线约束**：[AGENTS.md](../AGENTS.md)（模板元规则 + 下游「项目特定规则」占位）
 - **校验入口**：`./tasks.sh sync-skills`（修 skill 后必跑）· `./tasks.sh validate`（收口；含 `sync-skills-check` / `check-structure` / `check-refs` 三项）
-- **Preset / Role 映射真源**：本文件「Role / Model 映射」节是模型升级时**唯一改动点**；7 个 wf-\* skill 不复制 model 字串。
+- **Preset / Role 映射真源**：本文件「Role / Model 映射 / Vendor 字典」节是模型升级 / 新 vendor 接入时**唯一改动点**；7 个 wf-\* skill 不复制 model 字串。
