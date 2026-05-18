@@ -31,6 +31,12 @@ skill 内不写死 model 名；模型分类用 role 描述。模型 → role 推
 
 **Worktree 隔离（CLI 路径补偿）**：CLI 子进程无 `Agent` 工具的 `isolation=worktree` 自动隔离；编排者在 Bash 子进程前 `git worktree add /tmp/wt-<run-id>` 并 `cd` 进去，stage 收尾后 merge / drop。
 
+### 调度执行约束
+
+- preset 是**实际 dispatch 合约**，不是写作视角标签。选择 `claude-codex` / `codex-claude` / `claude-claude` / `codex-codex` 后，必须按上表真实拉起对应 role 的 CLI / host-specific agent；若对应 CLI / agent 不可用、未登录、失败、超时或被中断，必须 fail-fast 并明示，不得用当前模型模拟该 role 的意见。
+- 调度 Claude Code 或 Codex 时必须给足够执行时间；不得因短时间无输出草率中断。没有完善的后台沟通 / 状态回收机制时，优先使用前台同步执行；若使用后台 / agent / 长任务方式，必须持续跟踪最终状态。
+- 收口汇报必须包含 dispatch ledger：每个外部 role 的执行方式、状态（completed / unavailable / failed / timed out / interrupted）和产物来源。没有真实完成的 role 不得写成"Claude 侧意见"或"Codex 侧意见"。
+
 ## Preset Index
 
 slash command 第一位 token（可省，默认 `claude-codex`）：
@@ -56,7 +62,7 @@ slash command 第一位 token（可省，默认 `claude-codex`）：
 
 ## 三层边界（workflow 特有）
 
-**始终**：匹配「快速选择」时调对应 `/wf-<name>`；skill prompt 整段作为 dispatch payload，**不重写**（内置的独立性约束 / SCOPE-EXPANSION / paste boundary 是设计的一部分）；workflow 收口走对应 stage 的 Stop / Handoff，不"差不多就过"。
+**始终**：匹配「快速选择」时调对应 `/wf-<name>`；skill prompt 整段作为 dispatch payload，**不重写**（内置的独立性约束 / SCOPE-EXPANSION / paste boundary 是设计的一部分）；workflow 收口走对应 stage 的 Stop / Handoff，不"差不多就过"；涉及外部 Claude / Codex role 时按「调度执行约束」给足时间、跟踪状态并汇报 dispatch ledger。
 
 **先问后做**：同任务对应多 workflow（如 refactor + 高风险面）→ 与用户确认主路径；workflow 中段需切换 → 明示理由。
 
@@ -117,6 +123,7 @@ slash command 第一位 token（可省，默认 `claude-codex`）：
 - `wf-incident-rescue` 跳 Stage 1 复现直接 bisect——FLAKY 现场二分失真
 - `wf-coauthor-doc` 终稿忘跑 `./tasks.sh sync-skills`（skill 类目标）——validate 必失败
 - 跨 wf-\* 复制 prompt 拼新流程——独立性约束 / paste boundary / SCOPE-EXPANSION 是各 skill 设计的一部分，拼接后保护失效
+- 把 `codex-claude` / `claude-codex` 理解成"当前模型模拟另一方视角"，未真实 dispatch 外部 role 就汇总——preset 保护失效；必须 fail-fast 或明确标记缺失角色。
 
 ## 快速定位
 
