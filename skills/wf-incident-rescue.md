@@ -12,7 +12,7 @@ user-invocable: true
 
 ## Orchestration
 
-- **5 preset (默认 claude-codex)**：claude-codex / claude-claude / codex-claude / codex-codex / custom (`--reproducer=<m> --bisector=<m> --fix-designer=<m> --fix-implementer=<m>` 缺任一 fail-fast)
+- **preset**: `<vendor1>-<vendor2>` 按 [docs/workflows.md](../docs/workflows.md) 「Role / Model 映射 / Vendor 字典」节查；默认 `claude-codex`；`custom` (`--reproducer=<m> --bisector=<m> --fix-designer=<m> --fix-implementer=<m>` 缺任一 fail-fast)
 - **调度优先级**：CLI (`claude -p` / `codex exec`) → host subagent (Claude Code `general-purpose` / `codex:codex-rescue`) → fail-fast
 - **role slots**: REPRODUCER (Stage 1) / BISECTOR (Stage 2) / FIX-DESIGNER (Stage 3) / FIX-IMPLEMENTER (Stage 4)
 - **evaluator stage**: Stage 3 (FIX-DESIGNER) fresh subagent；input = STAGE-1 REPRODUCTION + STAGE-2 BISECT-RESULT（含 diff），**不**含 REPRODUCER / BISECTOR self-narrative。**例外**：Stage 1 (REPRODUCER) 与 Stage 2 (BISECTOR) **可同一 session 复用**——因 BISECTOR 需 REPRODUCER 累积的信息（reproducer 脚本路径、known-good anchor、failure mode），强制 fresh 反而损失

@@ -12,7 +12,7 @@ user-invocable: true
 
 ## Orchestration
 
-- **5 preset (默认 claude-codex)**：claude-codex (A=Claude/B=Codex) / claude-claude (A=B=Claude) / codex-claude (A=Codex/B=Claude) / codex-codex (A=B=Codex) / custom (`--diagnoser-a=<m> --diagnoser-b=<m> --reconciler=<m>` 缺任一 fail-fast)
+- **preset**: `<vendor1>-<vendor2>` 按 [docs/workflows.md](../docs/workflows.md) 「Role / Model 映射 / Vendor 字典」节查；默认 `claude-codex`；`custom` (`--diagnoser-a=<m> --diagnoser-b=<m> --reconciler=<m>` 缺任一 fail-fast)
 - **调度优先级**：CLI (`claude -p` / `codex exec`) → host subagent (Claude Code `general-purpose` / `codex:codex-rescue`) → fail-fast
 - **role slots**: DIAGNOSER-A (Stage 1) / DIAGNOSER-B (Stage 2，与 A 平行) / RECONCILER (Stage 3，从未参与 Stage 1/2)
 - **evaluator stage**: 三 stage 全部 fresh subagent；Stage 1/2 平行 dispatch 互不可见；Stage 3 第三个独立 fresh subagent
