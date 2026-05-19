@@ -23,7 +23,7 @@ user-invocable: true
 
 **调用语法**：`/wf-convoy-refactor [preset] [--mode=<simplification>] <task>`
 
-**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制。**批次间编排**：编排者按 batch plan 顺序为每批跑 Stage 2-4 mini-cycle，前一批 Stage 4 收口（用户做真实 commit）后才进下一批 Stage 2。可选 run dir：`.wf-runs/<ISO-timestamp>-convoy-refactor/<batch-id>/`。
+**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制。**批次间编排**：编排者按 batch plan 顺序为每批跑 Stage 2-4 mini-cycle，前一批 Stage 4 收口（用户做真实 commit）后才进下一批 Stage 2。
 
 ## When to use / Skip if
 

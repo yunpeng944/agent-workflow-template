@@ -21,7 +21,7 @@ user-invocable: true
 
 **调用语法**：`/wf-coding-relay [preset] [--mode=<simplification>] <task>`
 
-**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制为 dispatch payload；用户传入 task 替换 `[PASTE … HERE]`。可选 run dir：`.wf-runs/<ISO-timestamp>-coding-relay/`（`.gitignore` 已覆盖）。
+**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制为 dispatch payload；用户传入 task 替换 `[PASTE … HERE]`。
 
 ## When to use / Skip if
 

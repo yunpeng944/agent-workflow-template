@@ -21,7 +21,7 @@ user-invocable: true
 
 **调用语法**：`/wf-second-opinion [preset] [--mode=<simplification>] <task>`
 
-**双盲硬约束**：Stage 1/2 必须**两个独立 dispatch**（绝不复用任一 session）；Stage 3 必须是**第三个独立 dispatch**（从未参与 Stage 1/2）。可选 run dir：`.wf-runs/<ISO-timestamp>-second-opinion/`。
+**双盲硬约束**：Stage 1/2 必须**两个独立 dispatch**（绝不复用任一 session）；Stage 3 必须是**第三个独立 dispatch**（从未参与 Stage 1/2）。
 
 ## When to use / Skip if
 

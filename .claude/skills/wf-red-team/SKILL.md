@@ -23,7 +23,7 @@ user-invocable: true
 
 **调用语法**：`/wf-red-team [preset] [--mode=<simplification>] <task>`
 
-**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制为 dispatch payload。可选 run dir：`.wf-runs/<ISO-timestamp>-red-team/`。
+**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制为 dispatch payload。
 
 ## When to use / Skip if
 

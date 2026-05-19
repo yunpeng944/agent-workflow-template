@@ -23,7 +23,7 @@ user-invocable: true
 
 **调用语法**：`/wf-coauthor-doc [preset] [--mode=<simplification>] <task>`
 
-**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制。可选 run dir：`.wf-runs/<ISO-timestamp>-coauthor-doc/`。
+**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制。
 
 ## When to use / Skip if
 
