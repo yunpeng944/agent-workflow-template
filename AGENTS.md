@@ -6,7 +6,7 @@
 
 本模板把 Opus 级 + Codex/GPT 级模型的协作 workflow（PLANNER / IMPLEMENTER / REVIEWER 等接力）从某个具体项目抽出来，做成**任何语言 / 任何栈**的项目都能复用的底座：
 
-- 7 个 user-invocable `wf-*` skill 在 `skills/`（真源单点）
+- 9 个 user-invocable `wf-*` skill 在 `skills/`（真源单点）
 - 同一份治理 config 由 3 套等价 adapter（shell / python / node）消费，在 `adapters/`
 - 顶层 `tasks.sh` 调度（POSIX bash，零依赖），`ADAPTER=shell|python|node` 切 lane（默认 shell）
 - 工作流选择 / Role-Model 映射 / 调度优先级在 [docs/workflows.md](docs/workflows.md)
@@ -48,10 +48,10 @@
 
 ## 工作流入口
 
-- skill 真源（编辑只动这里）：[skills/](skills/) 下 7 个 `wf-*.md`
+- skill 真源（编辑只动这里）：[skills/](skills/) 下 9 个 `wf-*.md`
 - 镜像（generated · 勿改）：`.claude/skills/wf-*/SKILL.md`（Claude Code 消费）· `.agents/skills/wf-*/SKILL.md`（Codex CLI 消费）
 - 选择 / Role-Model 映射 / 调度 / 跨 workflow 流转：[docs/workflows.md](docs/workflows.md)
-- 7 个 workflow：`wf-coding-relay`（默认开发）· `wf-red-team`（高风险面）· `wf-convoy-refactor`（大重构）· `wf-coauthor-doc`（治理文档）· `wf-second-opinion`（疑难诊断）· `wf-bake-off`（选型）· `wf-incident-rescue`（regression / CI 红）
+- 9 个 workflow：`wf-coding-relay`（默认开发）· `wf-red-team`（高风险面）· `wf-convoy-refactor`（大重构）· `wf-coauthor-doc`（治理文档）· `wf-second-opinion`（疑难诊断）· `wf-bake-off`（选型）· `wf-incident-rescue`（regression / CI 红）· `wf-spike`（探索 / 概念验证）· `wf-code-review`（外部 diff / PR review）
 
 ## Adapter 调度
 
