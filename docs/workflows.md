@@ -150,6 +150,6 @@ slash command 第一位 token 形如 `<vendor1>-<vendor2>`（可省，默认 `cl
 
 - **skill 真源**：[skills/](../skills/) 下所有 `wf-*.md`（当前 9 个）
 - **镜像（generated · 勿改）**：`.claude/skills/wf-*/SKILL.md` · `.agents/skills/wf-*/SKILL.md`
-- **基线约束**：[AGENTS.md](../AGENTS.md)（模板元规则；`docs/agents-governance.md` 是下游可选治理参考，详见 AGENTS.md 工作流入口节）
+- **基线约束**：[AGENTS.md](../AGENTS.md)（模板元规则）· [docs/agents-governance.md](agents-governance.md)（治理基线，详见 AGENTS.md 工作流入口节）
 - **校验入口**：`./tasks.sh sync-skills`（修 skill 后必跑）· `./tasks.sh validate`（收口；含 `sync-skills-check` / `check-structure` / `check-refs`）
 - **Preset / Role 映射真源**：本文件「Role / Model 映射 / Vendor 字典」节是新 vendor 接入 / 模型升级时**唯一改动点**；所有 wf-\* skill 不复制 model 字串。
