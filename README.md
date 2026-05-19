@@ -6,7 +6,7 @@
 
 | 目录 / 文件                        | 作用                                                          |
 | ---------------------------------- | ------------------------------------------------------------- |
-| [skills/](skills/)                 | 7 个 user-invocable `wf-*` workflow skill 的**真源单点**      |
+| [skills/](skills/)                 | 9 个 user-invocable `wf-*` workflow skill 的**真源单点**      |
 | [adapters/](adapters/)             | 治理 config 的 3 lane 等价实现（shell / python / node）       |
 | [docs/workflows.md](docs/workflows.md) | 工作流选择 / Role-Model 映射 / 调度优先级 / 跨 workflow 流转 |
 
