@@ -113,9 +113,15 @@ checklist 只列类别，**不复制契约值**。详细字段以契约真源为
 
 候选标记方式：在该规则当行末尾加 HTML 注释 `<!-- prune-candidate: <reason> · <YYYY-MM-DD> -->`，下次审计批量处理。`grep prune-candidate` 即可拉清单。
 
-## 季度审计
+## 触发式审计
 
-每季度首月（1 / 4 / 7 / 10 月）由 maintainer 触发，节奏与 contract review 对齐：
+满足以下任一即触发批量审计（**不依赖日历**——agent 项目节奏远快于人类季度）：
+
+- `grep -rn "prune-candidate" AGENTS.md docs/` 返回 ≥ 5 条候选（含可能的子 AGENTS.md）。
+- 距上次 `docs(governance): audit ...` commit 已过 50 个项目 commit（`git log --grep="docs(governance): audit" -1` 拿到上次 hash，`git rev-list HEAD ^<hash> --count` 算距离）。
+- maintainer 显式触发。
+
+审计步骤：
 
 1. 全文 `grep -rn "prune-candidate" AGENTS.md docs/` 列出全部候选（含可能的子 AGENTS.md）。
 2. 对每个候选评估：
@@ -123,4 +129,4 @@ checklist 只列类别，**不复制契约值**。详细字段以契约真源为
    - 能并入更近的子 AGENTS.md 吗？是则迁移，根文件改指针。
    - 实际工程已不再需要？是则删。
 3. 同步：若变更触及契约或 `expectedHeadings`，按本文件相应 checklist 同步。
-4. 跑 `{{validate命令}}` 收口；commit message 用 `docs(governance): quarterly audit YYYY-QN — <精简变更摘要>`。
+4. 跑 `{{validate命令}}` 收口；commit message 用 `docs(governance): audit — <精简变更摘要>`（用于回溯算下次审计触发距离）。
