@@ -21,7 +21,7 @@ user-invocable: true
 
 **调用语法**：`/wf-incident-rescue [preset] [--mode=<simplification>] <task>`（task 建议含 failing test name / CI URL / 错误消息 / 最近 known-good）
 
-**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制。可选 run dir：`.wf-runs/<ISO-timestamp>-incident-rescue/`，reproducer 脚本本身放 `/tmp/reproducer-<task>.sh` 或独立 worktree（git tree 外，避免 bisect checkout 替换）。
+**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制。reproducer 脚本本身放 `/tmp/reproducer-<task>.sh` 或独立 worktree（git tree 外，避免 bisect checkout 替换）。
 
 ## When to use / Skip if
 

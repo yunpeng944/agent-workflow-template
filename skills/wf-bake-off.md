@@ -21,7 +21,7 @@ user-invocable: true
 
 **调用语法**：`/wf-bake-off [preset] [--mode=<simplification>] <task>`
 
-**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制。**`--prototyper` 只一个 slot**——A/B 两 prototype 用**同 model 但独立 subagent**（bake-off 公平性要求）。可选 run dir：`.wf-runs/<ISO-timestamp>-bake-off/`。
+**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制。**`--prototyper` 只一个 slot**——A/B 两 prototype 用**同 model 但独立 subagent**（bake-off 公平性要求）。
 
 ## When to use / Skip if
 
