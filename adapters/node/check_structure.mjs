@@ -12,13 +12,13 @@ const REPO_ROOT = process.env.AGENTS_MD_ROOT
 const CONFIG = JSON.parse(
   readFileSync(resolve(REPO_ROOT, 'agents-md.config.json'), 'utf8'),
 );
-const EXPECTED_HEADINGS = CONFIG.expectedHeadings;
+const EXPECTED_HEADINGS = CONFIG.expectedHeadings ?? [];
 
 /**
  * 章节最大行数（含 `## ` 标题行）。来自 agents-md.config.json。
  * 保留 named export 以兼容现有测试与下游引用。
  */
-export const SECTION_LINE_LIMITS = CONFIG.sectionLineLimits;
+export const SECTION_LINE_LIMITS = CONFIG.sectionLineLimits ?? {};
 
 function collectHeadings(md) {
   return [...md.matchAll(/^## (.+)$/gm)].map((match, index) => ({

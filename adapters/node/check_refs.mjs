@@ -13,10 +13,10 @@ const REPO_ROOT = process.env.AGENTS_MD_ROOT
 const CONFIG = JSON.parse(
   readFileSync(resolve(REPO_ROOT, 'agents-md.config.json'), 'utf8'),
 );
-const KNOWN_PREFIXES = CONFIG.knownPrefixes;
-const RUNTIME_PREFIXES = CONFIG.runtimePrefixes;
-const GENERATED_PREFIXES = CONFIG.generatedPrefixes;
-const INTENTIONALLY_ABSENT_REFS = new Set(CONFIG.intentionallyAbsentRefs);
+const KNOWN_PREFIXES = CONFIG.knownPrefixes ?? [];
+const RUNTIME_PREFIXES = CONFIG.runtimePrefixes ?? [];
+const GENERATED_PREFIXES = CONFIG.generatedPrefixes ?? [];
+const INTENTIONALLY_ABSENT_REFS = new Set(CONFIG.intentionallyAbsentRefs ?? []);
 const SCAN_EXCLUDE_DIRS = CONFIG.scanExcludeDirs ?? [];
 
 function toUnixPath(path) {

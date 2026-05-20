@@ -37,7 +37,7 @@ const REPO_ROOT = process.env.AGENTS_MD_ROOT
 const CONFIG = JSON.parse(
   readFileSync(resolve(REPO_ROOT, 'agents-md.config.json'), 'utf8'),
 );
-const MIRROR_ROOTS = CONFIG.mirrorRoots;
+const MIRROR_ROOTS = CONFIG.mirrorRoots ?? [];
 
 const GENERATED_HEADER = '<!-- generated · do not edit · source:';
 const KEBAB_CASE_RE = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
