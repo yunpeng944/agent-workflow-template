@@ -21,3 +21,6 @@ node_modules/
 
 # wf-* skill 可选 run dir（编排过程产物，按需启用）
 .wf-runs/
+
+# git worktree workspace（superpowers:using-git-worktrees 用）
+.worktrees/
