@@ -75,11 +75,11 @@
 - **模板真源**：[skills/](skills/) · [adapters/](adapters/) · [docs/workflows.md](docs/workflows.md) · [agents-md.config.json](agents-md.config.json) · [tasks.sh](tasks.sh)
 - **镜像（generated）**：`.claude/skills/` · `.agents/skills/`
 - **可粘贴素材**：[governance-snippets/](governance-snippets/)（15 段治理片段 · `{{占位符}}` 风格 · 给「项目特定规则」节填料） · [prompts/](prompts/)（3 个 external paste 模板 · 人→AI 交接）
-- **下游治理基线**（建议保留 · 下游可自定义内容）：[docs/agents-governance.md](docs/agents-governance.md)（AGENTS.md 自治维护：修补 vs Bootstrap / 删除候选 / 季度审计；`wf-coauthor-doc` / `wf-red-team` Stage prompt 引用） · [docs/development-conventions.md](docs/development-conventions.md)（TDD 判定 / 调研降级 / 文件大小 / 分层验证 / 依赖策略）
+- **下游治理基线**（建议保留 · 下游可自定义内容）：[docs/agents-governance.md](docs/agents-governance.md)（AGENTS.md 自治维护：修补 vs Bootstrap / 删除候选 / 触发式审计；`wf-coauthor-doc` / `wf-red-team` Stage prompt 引用） · [docs/bootstrap-spec.md](docs/bootstrap-spec.md)（完整 Bootstrap 流程详规） · [docs/development-conventions.md](docs/development-conventions.md)（TDD 判定 / 调研降级 / 文件大小 / 分层验证 / 依赖策略）
 - **验证入口**：`./tasks.sh sync-skills`（修 skill 后必跑）· `./tasks.sh validate`（收口）· `./tasks.sh parity`（optional 跨 lane 等价性）
 - **下游用法 / 集成指南**：[README.md](README.md)
 
 ## 自治维护
 
-治理细节、失效信号、修补 vs Bootstrap 判别、剪枝信号、触发式审计见 [docs/agents-governance.md](docs/agents-governance.md)。Agent 自行做日常修补（最小必要范围），完整 Bootstrap 需人工触发。
+治理细节、失效信号、修补 vs Bootstrap 判别、剪枝信号、触发式审计见 [docs/agents-governance.md](docs/agents-governance.md)。Agent 自行做日常修补（最小必要范围），完整 Bootstrap 需人工触发（流程见 [docs/bootstrap-spec.md](docs/bootstrap-spec.md)）。
 做日常修补时，必须读 `docs/agents-governance.md`「维护责任」节（每次至少审计 5 条周边规则）+「删除候选信号」/「剪枝信号」两节，顺手处理可删条目。
