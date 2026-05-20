@@ -54,7 +54,7 @@ ADAPTER=node    ./tasks.sh validate     # 切 node lane（zero-dep stdlib）
 
 - **零运行时依赖**：默认 shell lane 仅需 bash + jq + awk；切换到 python/node lane 是可选优化。
 - **真源单点**：skill 真源在 `skills/`，镜像 generated；治理规则在 `agents-md.config.json`，adapter 是消费者。
-- **可执行契约**：[adapters/README.md](adapters/README.md) 定义 3 lane MUST 行为，由 [tools/adapter-parity.test.mjs](tools/adapter-parity.test.mjs) 机械断言。
+- **可执行契约**：[adapters/README.md](adapters/README.md) 定义各 lane 实现的 MUST 行为。
 - **下游可覆盖**：[AGENTS.md](AGENTS.md) 提供「项目特定规则」占位节，下游 fork 后扩展。
 - **workflow 独立性**：每个 `wf-*` skill 内置的 paste boundary / fresh subagent / SCOPE-EXPANSION 是设计的一部分；改 prompt 前先读 [docs/workflows.md](docs/workflows.md) 三层边界节。
 

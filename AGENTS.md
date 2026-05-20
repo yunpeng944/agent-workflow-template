@@ -15,7 +15,7 @@
 
 - **任何修改前**：判断是改「模板自身」（skills/ adapters/ docs/workflows.md 等通用层）还是「项目特定规则」（下游 fork 后追加的部分）。模板自身改动要保持语言中性 / 零运行时依赖。
 - **修 skill 真源后**：必须跑 `./tasks.sh sync-skills` 重生 `.claude/skills/` 与 `.agents/skills/` 镜像；同 commit 提交真源 + 两份镜像。
-- **修 `agents-md.config.json` / adapter 契约**：按 [adapters/README.md](adapters/README.md)「变更治理」节同步全部 lane + `tools/adapter-parity.test.mjs`。
+- **修 `agents-md.config.json` / adapter 契约**：按 [adapters/README.md](adapters/README.md)「变更治理」节同步各 lane 实现。
 - **任务收口**：跑 `./tasks.sh validate`（含 check-structure / check-refs / sync-skills-check 三项）。
 
 ## 边界三层
