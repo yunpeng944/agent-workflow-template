@@ -36,5 +36,5 @@
   "generatedPrefixes": [],
   "intentionallyAbsentRefs": [],
   "mirrorRoots": [".claude/skills", ".agents/skills"],
-  "scanExcludeDirs": []
+  "scanExcludeDirs": ["docs/superpowers/plans"]
 }
