@@ -88,7 +88,7 @@ checklist 只列类别，**不复制契约值**。详细字段以契约真源为
 
 ## 治理脚本配置
 
-[adapters/](../adapters/)（node / python / shell 三 lane）+ [tools/adapter-parity.test.mjs](../tools/adapter-parity.test.mjs) 的项目特异常量（章节顺序、行预算、路径前缀、豁免清单、镜像目录）集中在 [agents-md.config.json](../agents-md.config.json)。改 AGENTS.md 章节、引入新一级目录、追加豁免路径，**先改 config 再跑 `{{validate命令}}`**，不要回到 adapter 脚本里改字面值（违背 universal layer 设计）。
+[adapters/](../adapters/) 的项目特异常量（章节顺序、行预算、路径前缀、豁免清单、镜像目录）集中在 [agents-md.config.json](../agents-md.config.json)。改 AGENTS.md 章节、引入新一级目录、追加豁免路径，**先改 config 再跑 `{{validate命令}}`**，不要回到 adapter 脚本里改字面值（违背 universal layer 设计）。
 
 模板抽取这套机制专为多项目复用：下游只需替换 `agents-md.config.json` 即可复用全部 lint / codegen 行为。adapter 行为契约的真源见 [adapters/README.md](../adapters/README.md)。
 

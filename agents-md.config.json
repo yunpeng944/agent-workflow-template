@@ -34,7 +34,7 @@
   ],
   "runtimePrefixes": [],
   "generatedPrefixes": [],
-  "intentionallyAbsentRefs": ["tools/adapter-parity.test.mjs"],
+  "intentionallyAbsentRefs": [],
   "mirrorRoots": [".claude/skills", ".agents/skills"],
   "scanExcludeDirs": ["docs/superpowers/plans"]
 }
