@@ -2,6 +2,8 @@
 
 > **真源**：本仓 `docs/bootstrap-spec.md`。另有 working copy 在 Obsidian (`AgentSpace/40-agent-autonomy-bootstrap-spec.md`) 与 Notion (`34199080acdf81dd8d4cf30c3bda7e1a`)，改动以本仓为准；working copy 仅供作者编辑使用，回流前需 cp 同步到本仓。
 >
+> **与项目 `docs/agents-governance.md` 的分层关系**：本 spec 是高层 SOP，可能列比项目 governance 入口段更全的场景（例如 §1.6 第 5 条「新团队成员首次接触」在项目 governance.md 故意精简掉，只保留 4 条高频 ops-level 触发条件）。不算漂移，按"spec 覆盖完整场景 / governance 精简入口"分层；spec 跟项目 governance **直接矛盾**才视为漂移。
+>
 > **元规则**：本文件是 agent 自治 bootstrap 的完整规范，单文件自包含。结构：使用指南（三种场景的 launch prompt）→ Layer 1 执行卡片（agent 必读）→ Layer 2 设计原理（人类按需）→ Layer 3 评估附录（bootstrap 后自评）。
 
 ---
