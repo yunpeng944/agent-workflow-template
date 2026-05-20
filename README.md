@@ -7,7 +7,7 @@
 | 目录 / 文件                        | 作用                                                          |
 | ---------------------------------- | ------------------------------------------------------------- |
 | [skills/](skills/)                 | 9 个 user-invocable `wf-*` workflow skill 的**真源单点**      |
-| [adapters/](adapters/)             | 治理 config 的 3 lane 等价实现（shell / python / node）       |
+| [adapters/](adapters/)             | 治理 config 的 Node adapter 实现（消费 `agents-md.config.json`） |
 | [docs/workflows.md](docs/workflows.md) | 工作流选择 / Role-Model 映射 / 调度优先级 / 跨 workflow 流转 |
 
 ## 用法
@@ -28,17 +28,14 @@ cd my-project
 - **Codex CLI**：同上语法
 - 完整选择指南：[docs/workflows.md](docs/workflows.md) 「快速选择」表
 
-### 3. Adapter 调度（语言中性）
+### 3. Adapter 调度
 
 ```bash
-./tasks.sh validate                     # check-structure + check-refs + sync-skills-check（默认 shell lane）
-ADAPTER=python ./tasks.sh validate      # 切 python lane
-ADAPTER=node    ./tasks.sh validate     # 切 node lane（zero-dep stdlib）
-./tasks.sh parity                       # optional：跨 lane 等价性测试（需 Node 22+）
+./tasks.sh validate                     # check-structure + check-refs + sync-skills-check
 ./tasks.sh help                         # 列全部 target
 ```
 
-默认 `ADAPTER=shell`：POSIX bash + jq + awk，绝大多数 Unix 预装。
+调度脚本 `tasks.sh` 是 POSIX bash，但 adapter 实现是 Node：需 **Node 20.11+**（仅用 Node stdlib，无第三方依赖）。
 
 ### 4. 追加你的项目规则
 
@@ -52,9 +49,9 @@ ADAPTER=node    ./tasks.sh validate     # 切 node lane（zero-dep stdlib）
 
 ## 设计原则
 
-- **零运行时依赖**：默认 shell lane 仅需 bash + jq + awk；切换到 python/node lane 是可选优化。
+- **最小依赖**：调度 `tasks.sh` 是 POSIX bash；adapter 需 Node 20.11+（仅 stdlib，无 npm install）。
 - **真源单点**：skill 真源在 `skills/`，镜像 generated；治理规则在 `agents-md.config.json`，adapter 是消费者。
-- **可执行契约**：[adapters/README.md](adapters/README.md) 定义各 lane 实现的 MUST 行为。
+- **可执行契约**：[adapters/README.md](adapters/README.md) 定义 adapter 的 MUST 行为。
 - **下游可覆盖**：[AGENTS.md](AGENTS.md) 提供「项目特定规则」占位节，下游 fork 后扩展。
 - **workflow 独立性**：每个 `wf-*` skill 内置的 paste boundary / fresh subagent / SCOPE-EXPANSION 是设计的一部分；改 prompt 前先读 [docs/workflows.md](docs/workflows.md) 三层边界节。
 
