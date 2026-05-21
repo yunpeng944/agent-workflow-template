@@ -12,13 +12,10 @@ user-invocable: true
 
 ## Orchestration
 
-- **preset**: `<vendor1>-<vendor2>` 按 [docs/workflows.md](../docs/workflows.md) 「Role / Model 映射 / Vendor 字典」节查；默认 `claude-codex`；**single-mode（默认）是 single-role workflow，只用 vendor1（A 段 role），vendor2 被忽略**（preset 解析见 docs 中 single-role workflow 例外）；`double-review` 模式下 vendor1 = REVIEWER-A，vendor2 = REVIEWER-B，RECONCILER 用 vendor1（第三 dispatch）；`custom` (`--reviewer=<m>` 或 `--reviewer-a=<m> --reviewer-b=<m> --reconciler=<m>` 缺任一 fail-fast)
-- **调度优先级**：CLI (`claude -p` / `codex exec`) → host subagent (Claude Code `general-purpose` / `codex:codex-rescue`) → fail-fast
-- **role slots**: REVIEWER (single, A 段) **或** REVIEWER-A (A 段) / REVIEWER-B (A 段) / RECONCILER (A 段)（double-review 模式）
-- **evaluator stage**: single-mode REVIEWER fresh subagent，input 无 PLAN（仅 diff + 仓库根）；double-review 模式 RECONCILER 从未参与 A/B
-- **特有约束**: **不许猜规格**（意图判定锚点：同 PR 测试 / 命名 / 调用点 / 同模块 grep / commit message / 文档；任一无法唯一证明意图 → 标 🟡 "需向作者澄清"，不擅自评对错）；**不含实现段**（要修走 coding-relay 或派回原作者，本 workflow 只允许写 review action / evidence / follow-up，**禁止补丁级实现方案**）；6 维度逐条 🔴/🟡/🟢 + file:line + review action；总结**必给三态推荐**（APPROVE / REQUEST-CHANGES / COMMENT-ONLY）；**升级 `double-review` 客观条件**（不依赖主观"高价值"判断）：用户显式 `--mode=double-review` / 改动文件数 ≥ 8 / 触及凭证或公共 API 或 CLI / JSON schema 字段 / 跨 ≥ 3 模块 / single-mode 输出 🔴 ≥ 3
-- **同产品 preset 警告**：与 wf-second-opinion / wf-bake-off 同机制——`double-review` 模式下当 `vendor1 == vendor2`（如 `claude-claude`），双盲只剩 session 隔离，丢失跨厂商多样性。编排者在 Stage 2 dispatch 前打印警告（不阻塞）。single-mode 不触发（A 段单角色无 B 对照）
-- 详细 model 映射 / host-specific routing / 调度执行约束 / dispatch ledger / single-role workflow preset 例外 → [docs/workflows.md](../docs/workflows.md)
+- **preset**: 见 [docs/workflows.md](../docs/workflows.md) 「Role / Model 映射 / Vendor 字典」节；默认 `claude-codex`；`custom` (`--reviewer=<m>` 或 `--reviewer-a=<m> --reviewer-b=<m> --reconciler=<m>` 缺任一 fail-fast)
+- **role slots**: REVIEWER (single-mode，A 段) **或** REVIEWER-A (A 段) / REVIEWER-B (A 段) / RECONCILER (A 段)（double-review 模式）
+- **特有约束**: **不许猜规格**（意图判定锚点：同 PR 测试 / 命名 / 调用点 / 同模块 grep / commit message / 文档；任一无法唯一证明意图 → 标 🟡 "需向作者澄清"，不擅自评对错）；**不含实现段**（要修走 coding-relay 或派回原作者，本 workflow 只允许写 review action / evidence / follow-up，**禁止补丁级实现方案**）；6 维度逐条 🔴/🟡/🟢 + file:line + review action；总结**必给三态推荐**（APPROVE / REQUEST-CHANGES / COMMENT-ONLY）；**升级 `double-review` 客观条件**（不依赖主观"高价值"判断）：用户显式 `--mode=double-review` / 改动文件数 ≥ 8 / 触及凭证或公共 API 或 CLI / JSON schema / 跨 ≥ 3 模块 / single-mode 输出 🔴 ≥ 3；**同产品 preset 警告**——`double-review` 模式下当 `vendor1 == vendor2`（如 `claude-claude`），双盲只剩 session 隔离。编排者在 Stage 2 dispatch 前打印警告（不阻塞）
+- 通用调度行为（优先级 / fresh subagent / dispatch ledger / single-mode 专用 preset 解析）→ [docs/workflows.md](../docs/workflows.md)
 
 **调用语法**：`/wf-code-review [preset] [--mode=<simplification>] <task>` —— task 是 diff 来源（PR URL / commit range / 路径列表 / staged 改动指针）
 
@@ -238,5 +235,4 @@ user-invocable: true
 
 ## 已知 follow-up
 
-- `skills/wf-code-review.md` Orchestration 段与其他 wf-_ skill 都有"调度优先级 / role slots / 特有约束"摘要，复述 docs/workflows.md 中的总则；与 wf-bake-off / wf-second-opinion 等保持一致风格，未本次精简。后续若全部 wf-_ 一起降重复，再统一指针化。
 - `skills/wf-code-review.md` 可读性 / 架构维度判定锚点（如圈复杂度 > 10、抽象 < 2 调用点）阈值是常用经验值；后续若仓库定 lint config 可改为引用 ESLint rule。
