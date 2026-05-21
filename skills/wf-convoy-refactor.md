@@ -21,8 +21,6 @@ user-invocable: true
 
 **调用语法**：`/wf-convoy-refactor [preset] [--mode=<simplification>] <task>`
 
-**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制。**批次间编排**：编排者按 batch plan 顺序为每批跑 Stage 2-4 mini-cycle，前一批 Stage 4 收口（用户做真实 commit）后才进下一批 Stage 2。
-
 ## When to use / Skip if
 
 **用**：跨 ≥ 3 模块 / ≥ 5 文件的重构（重命名、抽象迁移、API 演化、目录结构改造）；改动公共抽象 / 模块边界 / 跨子系统 type 流向；大型框架升级 / 工具链替换；一次完成 diff 大、回滚成本高、reviewer 难看清。
@@ -37,8 +35,6 @@ user-invocable: true
 
 ### Stage 1 — PLANNER（Convoy 路线规划）
 
-````
-===== BEGIN STAGE-1-PLANNER PROMPT =====
 把以下重构设计成**护送车队（convoy）路线**。先不要写代码。基于本仓 AGENTS.md：
 
 **决策门**：重构是否含阻断性歧义（目标状态 / API 契约边界 / 是否允许行为变更）？
@@ -73,8 +69,6 @@ Convoy plan 输出：
 [PASTE REFACTOR TARGET + CURRENT/TARGET STATE HERE]
 ===== END STAGE-1 REQUIREMENT =====
 ```
-===== END STAGE-1-PLANNER PROMPT =====
-````
 
 **Artifact**：澄清清单 或 完整 convoy plan（10 项 + 批次依赖图）。
 **Handoff to Stage 2**：每个 BATCH 有可机械校验的验收 + 单批估算 ≤ 600 行 / 15 文件 + 不变量全部可机械化。
@@ -83,8 +77,6 @@ Convoy plan 输出：
 
 > **本 Stage 对每个 BATCH 跑一次**。完成 batch N 后回 Stage 3 review，全绿后再回 Stage 2 跑 batch N+1。**不要把多批合并到一次 Stage 2 跑**——丢失分批价值。
 
-````
-===== BEGIN STAGE-2-IMPLEMENTER PROMPT =====
 本次是 convoy refactor 的**一个批次**。两阶段执行。
 
 **当前批次 id**: [BATCH_ID]（在 plan 中查找对应条目）
@@ -144,16 +136,12 @@ SCOPE-EXPANSION (如有): 文件 + why
 [PASTE STAGE-1 CONVOY PLAN HERE]
 ===== END STAGE-1 PLAN =====
 ```
-===== END STAGE-2-IMPLEMENTER PROMPT =====
-````
 
 **Artifact**：PHASE-A RESULT + 三个 Phase B 块（SUMMARY / DIFF / PENDING-COMMIT-DRAFT）+ 全绿 `./tasks.sh validate`。**本批此时尚未 commit**。
 **Handoff to Stage 3**：本批 Phase B 完成 + 所有 INVARIANTS PASS。把 STAGE-2 DIFF + STAGE-2 SUMMARY 中**「本批 INVARIANTS 检查结果」**一段（命名为 INVARIANTS-REPORT）传给 Stage 3（diff 给独立 review、INVARIANTS 报告供命令型不变量交叉核对）。
 
 ### Stage 3 — REVIEWER（fresh subagent，按批 review + 批次裁定）
 
-````
-===== BEGIN STAGE-3-REVIEWER PROMPT =====
 不要重新实现。本次是 convoy refactor 的**一个批次** review。
 
 **当前批次 id**: [BATCH_ID]
@@ -197,16 +185,12 @@ review 维度（按 convoy 特性扩展）：
 [PASTE Stage 2 SUMMARY 中「本批 INVARIANTS 检查结果」段]
 ===== END STAGE-2 INVARIANTS-REPORT (BATCH [ID]) =====
 ```
-===== END STAGE-3-REVIEWER PROMPT =====
-````
 
 **Artifact**：分级清单 + file:line + **批次裁定**（ACCEPT / REWORK / ABORT）。
 **Handoff to Stage 4**：`BATCH ACCEPT` + (🔴 > 0 **或** 🟡 > 0) → 进 Stage 4 处理；`BATCH ACCEPT` + 全 🟢 → 跳 Stage 4 直接进收口 commit；`BATCH REWORK` → 回 Stage 2 重做本批（丢 working tree）；`BATCH ABORT` → 回 Stage 1 修订 plan（本批此时未 commit，无需 git revert）。
 
 ### Stage 4 — IMPLEMENTER（本批修复 + 收口）
 
-````
-===== BEGIN STAGE-4-IMPLEMENTER PROMPT =====
 按 review 清单修本批改动。
 
 **当前批次 id**: [BATCH_ID]
@@ -246,8 +230,6 @@ DEFERRED-TO-BATCH-X: [item ↔ batch id]
 [PASTE STAGE-3 REVIEW HERE]
 ===== END STAGE-3 REVIEW =====
 ```
-===== END STAGE-4-IMPLEMENTER PROMPT =====
-````
 
 **Artifact**：SUMMARY + DIFF + 全绿 `./tasks.sh validate` + INVARIANTS 全 PASS。
 **Stop**：本批 Stage 4 收口后**由用户做真实 commit**（含 Stage 2 + Stage 4 累计 diff，用 Stage 2 PENDING-COMMIT-DRAFT message）。记本批最终 commit SHA，**回 Stage 2 跑下一批**直到所有 batch 完成。最后跑一次全量 `./tasks.sh validate` 收尾整个 convoy。

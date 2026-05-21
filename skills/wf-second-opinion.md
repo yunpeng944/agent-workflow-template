@@ -41,8 +41,6 @@ user-invocable: true
 
 ### Stage 1 — DIAGNOSER-A（fresh subagent，独立）
 
-````
-===== BEGIN STAGE-1-DIAGNOSER-A PROMPT =====
 基于以下事故 input 独立给出 root-cause 假设。**不要写修复代码**。
 
 **盲区原则**：你不知道是否有其他诊断者并行工作；不要假设你的假设会被采纳。
@@ -83,16 +81,12 @@ high / med / low + 一句话理由。
 [PASTE: 症状 / 复现步骤 / 错误日志 / failing test 名 / 已尝试但失败的修法]
 ===== END INCIDENT INPUT =====
 ```
-===== END STAGE-1-DIAGNOSER-A PROMPT =====
-````
 
 **Artifact**：STAGE-1 DIAGNOSIS 块（7 section 全填，Blind Spots 不可"无"）。
 **Handoff**：诊断保存原样，**不**给 Stage 2 看。Stage 1/2 可同时跑或异步跑，但 Stage 3 必须双方完成后才进。
 
 ### Stage 2 — DIAGNOSER-B（fresh subagent，与 A 平行，互不可见）
 
-````
-===== BEGIN STAGE-2-DIAGNOSER-B PROMPT =====
 基于以下事故 input 独立给出 root-cause 假设。**不要写修复代码**。
 
 **盲区原则**：你不知道是否有其他诊断者并行工作；不要假设你的假设会被采纳。
@@ -132,8 +126,6 @@ high / med / low + 一句话理由。
 [PASTE: 完全相同的 input 块，与 Stage 1 字符级一致]
 ===== END INCIDENT INPUT =====
 ```
-===== END STAGE-2-DIAGNOSER-B PROMPT =====
-````
 
 **Artifact**：STAGE-2 DIAGNOSIS 块（与 Stage 1 完全同构）。
 **Handoff**：与 Stage 1 同。
@@ -142,8 +134,6 @@ high / med / low + 一句话理由。
 
 > **本 stage 不能让 Stage 1/2 任一方做**——他们已"押注"自己的假设。用户可独立完成，或用第三个 fresh subagent。
 
-````
-===== BEGIN STAGE-3-RECONCILER PROMPT =====
 你是仲裁者，从未参与这两份诊断。**不要重新诊断**——工作是**比对 + 提取行动**。
 
 比对维度：
@@ -193,8 +183,6 @@ high / med / low + 一句话理由。
 [PASTE]
 ===== END STAGE-2 DIAGNOSIS =====
 ```
-===== END STAGE-3-RECONCILER PROMPT =====
-````
 
 **Artifact**：STAGE-3 RECONCILIATION 块（5 section）+ 一条 Next Probe + 明确 Action Tree 分支。
 **Stop**：用户跑 Next Probe → 按 Action Tree 进下一步 workflow（典型：`wf-incident-rescue` 做最小修，或带新证据重跑 Stage 1/2）。

@@ -23,8 +23,6 @@ user-invocable: true
 
 **调用语法**：`/wf-bake-off [preset] [--mode=<simplification>] <task>`
 
-**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制。**`--prototyper` 只一个 slot**——A/B 两 prototype 用**同 model 但独立 subagent**（bake-off 公平性要求）。
-
 ## When to use / Skip if
 
 **用**：架构 / 框架 / 库 / build 工具 / 数据存储 / 通信协议选型；性能策略对比；跨子系统 schema 形态对比；决策**难回退**或**影响面大**——一旦写进代码会拖累 N 个后续决策。
@@ -39,8 +37,6 @@ user-invocable: true
 
 ### Stage 1 — CRITERIA-LOCKER（锁定胜出判据）
 
-````
-===== BEGIN STAGE-1-CRITERIA-LOCKER PROMPT =====
 先**不要**说哪个更好。本 stage 产物是**评估标准**——Stage 2 prototype 跑出结果后**判据不许修改**。
 
 **反 reverse-engineering 原则**：你不知道两边 prototype 会跑成什么样；把判据设计成能在不知结果的情况下**机械应用**。
@@ -97,8 +93,6 @@ user-invocable: true
 [PASTE: 选型场景 / 候选清单 / 已知约束 / 决策影响面]
 ===== END STAGE-1 REQUIREMENT =====
 ```
-===== END STAGE-1-CRITERIA-LOCKER PROMPT =====
-````
 
 **Artifact**：STAGE-1 BAKEOFF-CRITERIA 块（7 个 section 全填，机械化加权和 ≤ 70 且总和 = 100）。
 **Handoff to Stage 2**：criteria 完整 + 加权合规 + Hard Constraints / Mechanical Metrics 全机械可判。**此后不许回改 criteria**——除非 Stage 2 发现某候选无法启动到跑 benchmark（Hard Constraint 漏写）才能补一条 Hard Constraint。**补 Hard Constraint 后果**：criteria 版本必须 bump（`criteria-v1` → `criteria-v2`），对**所有候选**重跑相关 Stage 2 测量（受新约束影响的维度）——否则 A/B 评分基线不一致。
@@ -107,8 +101,6 @@ user-invocable: true
 
 > **本 stage dispatch 两次**：A、B 各起一个**独立 fresh subagent**，prompt 字符级相同（只候选名占位符替换）。**不要在同一 subagent 中先做 A 再做 B**——会造成实现偏置。同 fixture 调两次 `codex exec`/`claude -p`，唯一差异是末尾 `[CANDIDATE_NAME]` 替换为 `A` 或 `B`。
 
-````
-===== BEGIN STAGE-2-PROTOTYPER PROMPT =====
 本 session 只为**候选 [CANDIDATE_NAME]** 工作。**不要**讨论另一候选 / 不要对比 / 不要暗示偏好——忠实实现并跑 benchmark。
 
 **核心约束**：
@@ -177,8 +169,6 @@ prototype 文件清单 + 总行数（必须 ≤ 500）
 ```
 
 **当前候选**: [CANDIDATE_NAME]
-===== END STAGE-2-PROTOTYPER PROMPT =====
-````
 
 **Artifact**：每候选各产 `STAGE-2 PROTOTYPE-[NAME]` + `STAGE-2 PROTOTYPE-DIFF-[NAME]`；VETOED 只产 Status + Hard Constraints Check；BLOCKED-OVER-BUDGET 只产 Status + 预算诊断。
 **Handoff to Stage 3**：
@@ -190,8 +180,6 @@ prototype 文件清单 + 总行数（必须 ≤ 500）
 
 ### Stage 3 — SCORER（fresh subagent，严格按 Stage 1 判据评分）
 
-````
-===== BEGIN STAGE-3-SCORER PROMPT =====
 **严格使用 Stage 1 BAKEOFF-CRITERIA**——引入 Stage 1 未列维度 / 改加权 / 修 Scoring Rubric / 引用"团队偏好"等都被视为评分作弊。
 
 **反 reverse-engineering 提醒**：你看到 prototype 后可能下意识被某候选风格吸引——识别这种偏置；**评分只用 Stage 2 提供的 raw metrics + proxy 证据**，Implementation Summary / Caveats 是上下文不是评分依据，不得受其措辞 / 语气 / 自吹影响。
@@ -270,8 +258,6 @@ loser 在哪些维度被压（具体行 / 具体差值）+ 不可被 future impr
 [PASTE]
 ===== END STAGE-2 PROTOTYPE-B =====
 ```
-===== END STAGE-3-SCORER PROMPT =====
-````
 
 **Artifact**：SCORECARD（score table + Hard Constraint + Winner + Rationale + Why Not + Residual Risks）+ RECOMMENDATION（含下一步 workflow）。
 **Stop**：Winner = INCOMPLETE → 回 Stage 2 补缺失维度；有效 winner → 带 RECOMMENDATION 进下一步 workflow 落地。

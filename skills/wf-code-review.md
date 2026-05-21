@@ -21,8 +21,6 @@ user-invocable: true
 
 **调用语法**：`/wf-code-review [preset] [--mode=double-review] <task>` —— task 是 diff 来源（PR URL / commit range / 路径列表 / staged 改动指针）。**约定**：`single-mode` 指默认 1 段 REVIEWER；`double-review` 指升级到 3 段双盲 + RECONCILER。
 
-**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制。
-
 ## When to use / Skip if
 
 **用**：外部 diff / PR review（含下游贡献者 PR）/ 同事 commit 让看 / 历史代码深度审计 / pre-merge 独立第二视角。
@@ -39,8 +37,6 @@ user-invocable: true
 
 ### Stage 1 — REVIEWER（fresh subagent，无 PLAN input）
 
-````
-===== BEGIN STAGE-1-REVIEWER PROMPT =====
 本 session 是**外部代码 review**——你**没有规格**（没有 PLAN / 没有原作者意图说明），只能基于代码本身评判。
 
 **核心约束**：
@@ -141,8 +137,6 @@ user-invocable: true
 [PASTE: diff 来源指针——PR URL / commit range / staged 改动 / 路径列表；REVIEWER 自取实际 diff via git diff / gh pr view / cat]
 ===== END STAGE-1 DIFF-INPUT =====
 ```
-===== END STAGE-1-REVIEWER PROMPT =====
-````
 
 **Artifact**：STAGE-1 REVIEW 块（6 维度逐条 + Intent Clarifications + Summary 三态推荐 + Follow-ups）。
 **Stop**（single-mode）：Summary 三态推荐已选 + 🔴/🟡 全配 file:line + 意图不明改动已列入 Intent Clarifications。
@@ -154,8 +148,6 @@ user-invocable: true
 
 **Stage 2A / 2B（平行 fresh dispatch，字符级一致 input）**：
 
-````
-===== BEGIN STAGE-2-REVIEWER-[A|B] PROMPT =====
 本 session 是 REVIEWER-[A|B]——独立 review，**不知道**另一 REVIEWER 的存在 / 不读其输出。
 
 按 Stage 1 REVIEWER 完全相同的 6 维度 + 不许猜规格 + 不含实现 + review action 不写补丁 约束 review。
@@ -167,13 +159,9 @@ user-invocable: true
 [PASTE DIFF-INPUT HERE]
 ===== END STAGE-1 DIFF-INPUT =====
 ```
-===== END STAGE-2-REVIEWER-[A|B] PROMPT =====
-````
 
 **Stage 3 — RECONCILER（fresh subagent，从未参与 A/B）**：
 
-````
-===== BEGIN STAGE-3-RECONCILER PROMPT =====
 综合 REVIEW-A + REVIEW-B，输出**共识 review** + 分歧标记。
 
 执行要求：
@@ -208,8 +196,6 @@ user-invocable: true
 ```
 
 约束：不引入 A/B 都未提的新 finding；Divergence 必给仲裁不许"双方都对"；最终推荐必 cite 严重度依据；不写补丁级实现方案。
-===== END STAGE-3-RECONCILER PROMPT =====
-````
 
 ```
 ===== BEGIN STAGE-2 REVIEW-A =====

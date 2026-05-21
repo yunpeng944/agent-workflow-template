@@ -23,8 +23,6 @@ user-invocable: true
 
 **调用语法**：`/wf-coauthor-doc [preset] [--mode=<simplification>] <task>`
 
-**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制。
-
 ## When to use / Skip if
 
 **用**：新建或大改 AGENTS.md / 子模块 AGENTS.md / docs/ 治理类文档；起草新 skill（`skills/<name>.md`，尤其 user-invocable workflow skill）；起草 `.claude/agents/<name>.md` subagent 规约；改造 system prompt / role description。
@@ -39,8 +37,6 @@ user-invocable: true
 
 ### Stage 1 — PLANNER（起草）
 
-````
-===== BEGIN STAGE-1-PLANNER PROMPT =====
 基于以下需求与本仓 AGENTS.md + `docs/agents-governance.md`，起草目标文档。
 
 **决策门**：需求是否含阻断性歧义（受众 / 放置路径 / 与现有文档边界 / 替换 vs 合并 vs 并存）？
@@ -71,16 +67,12 @@ user-invocable: true
 [PASTE DOC GOAL: 受众 / 放置路径 / 上层约束 / 要替换或合并的现有文件 HERE]
 ===== END STAGE-1 REQUIREMENT =====
 ```
-===== END STAGE-1-PLANNER PROMPT =====
-````
 
 **Artifact**：澄清清单 或 完整草稿 + 设计说明 + 替代结构 + 校验入口。
 **Handoff to Stage 2**：草稿完整 + 所有跨文件引用路径真实存在 + 校验入口明确。
 
 ### Stage 2 — AUDITOR（fresh subagent，严苛校验）
 
-````
-===== BEGIN STAGE-2-AUDITOR PROMPT =====
 你是治理文档审计 agent。**不要重写文档**，只做严苛校验。本文档**不是代码**——校验靠机械工具 + 静读。
 
 校验维度（每条逐项条目，不只是"通过/不通过"总结）：
@@ -144,16 +136,12 @@ user-invocable: true
 [PASTE STAGE-1 DRAFT + 设计说明 HERE]
 ===== END STAGE-1 DRAFT =====
 ```
-===== END STAGE-2-AUDITOR PROMPT =====
-````
 
 **Artifact**：STAGE-2 AUDIT 块（7 维度逐条 + 总结）+ 三命令退出码 + working tree 处置建议。
 **Handoff to Stage 3**：audit 完整。总结若说"回 Stage 1 重写: YES"则回 Stage 1 修订后重跑 Stage 2，否则进 Stage 3。
 
 ### Stage 3 — FINALIZER（fresh subagent，**例外**：必读 Stage 2 AUDIT）
 
-````
-===== BEGIN STAGE-3-FINALIZER PROMPT =====
 综合 Stage 1 草稿 + Stage 2 审计意见，**产出 commit-ready 最终文本**。
 
 执行要求：
@@ -201,8 +189,6 @@ SCOPE-EXPANSION (如有): 内容 + why
 [PASTE STAGE-2 AUDIT HERE]
 ===== END STAGE-2 AUDIT =====
 ```
-===== END STAGE-3-FINALIZER PROMPT =====
-````
 
 **Artifact**：FINAL（终稿全文）+ CHANGELOG + VERIFICATION-PLAN。
 **Stop**：用户写入目标路径 →（若是 `skills/<name>.md` 先跑 `./tasks.sh sync-skills`）→ 跑 `./tasks.sh validate` → 全绿即收口。命令失败则回 Stage 3 修订（不必从 Stage 1 重做，除非根因在初稿设计）。

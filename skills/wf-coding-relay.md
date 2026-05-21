@@ -21,8 +21,6 @@ user-invocable: true
 
 **调用语法**：`/wf-coding-relay [preset] [--mode=<simplification>] <task>`
 
-**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制为 dispatch payload；用户传入 task 替换 `[PASTE … HERE]`。
-
 ## When to use / Skip if
 
 **用**：新功能 / 跨多文件 / 不熟模块 / 触及契约或跨端边界。
@@ -37,8 +35,6 @@ user-invocable: true
 
 ### Stage 1 — PLANNER
 
-````
-===== BEGIN STAGE-1-PLANNER PROMPT =====
 基于以下需求与本仓 AGENTS.md：
 
 **决策门**：需求是否含阻断性歧义 / 未确认决策？
@@ -63,15 +59,11 @@ user-invocable: true
 [PASTE REQUIREMENT HERE]
 ===== END STAGE-1 REQUIREMENT =====
 ```
-===== END STAGE-1-PLANNER PROMPT =====
-````
 
 **Artifact**：澄清清单（用户答完重跑 Stage 1）或完整方案（含 9 项 → 进 Stage 2，所有路径 / 命令 / API 必须能在仓库中验证存在）。
 
 ### Stage 2 — IMPLEMENTER（Phase A 校验 + Phase B 实现）
 
-````
-===== BEGIN STAGE-2-IMPLEMENTER PROMPT =====
 两阶段执行：
 
 **Phase A — 方案对仓库的可执行性校验（不写代码）**：
@@ -118,16 +110,12 @@ SCOPE-EXPANSION (如有): 文件 + why + 是否已停等
 [PASTE STAGE-1 PLAN HERE]
 ===== END STAGE-1 PLAN =====
 ```
-===== END STAGE-2-IMPLEMENTER PROMPT =====
-````
 
 **Artifact**：PHASE-A RESULT + SUMMARY + DIFF。diff 必须是 `git diff` 完整文本，不接受 SHA 替代——Stage 3 需 diff 本身做独立 review。
 **Handoff to Stage 3**：Phase B 完成 + `./tasks.sh validate` 绿 → 把 STAGE-2 DIFF 块（**不含 SUMMARY**）传给 Stage 3。
 
 ### Stage 3 — REVIEWER（fresh subagent，只读 plan + diff）
 
-````
-===== BEGIN STAGE-3-REVIEWER PROMPT =====
 不要重新实现。**独立性约束**：本 prompt 含 plan 与 diff；IMPLEMENTER summary **永不进入** context——独立 review 不可逆，禁止"事后补给 summary 调整 review"（这会软化结论）。补充澄清走 Stage 4 IMPLEMENTER 主动 raise，不走 review 修订路径。
 
 review 维度：
@@ -155,15 +143,11 @@ review 维度：
 [PASTE git diff OUTPUT HERE]
 ===== END STAGE-2 DIFF =====
 ```
-===== END STAGE-3-REVIEWER PROMPT =====
-````
 
 **Artifact**：分级清单 + file:line。**任一 🔴 必须进 Stage 4**；0 🔴 且 ≤ 2 🟡 可考虑收口或仅修 1-2 条。
 
 ### Stage 4 — IMPLEMENTER（修复 + 验证）
 
-````
-===== BEGIN STAGE-4-IMPLEMENTER PROMPT =====
 按 review 清单修代码：
 1. **所有 🔴 必改**，不能跳过
 2. 🟡 处理（**不允许只留 TODO 注释**）：本次直接修 OR 创建 tracked follow-up（GitHub issue / 本地 follow-ups.md，含 file:line + 描述 + 责任人）
@@ -192,8 +176,6 @@ review 维度：
 [PASTE STAGE-3 REVIEW HERE]
 ===== END STAGE-3 REVIEW =====
 ```
-===== END STAGE-4-IMPLEMENTER PROMPT =====
-````
 
 **Artifact**：SUMMARY + DIFF + 全绿 `./tasks.sh validate` + follow-up 清单。
 **Stop**：`./tasks.sh validate` 绿 + 所有 🔴 处理 + 所有 🟡 处理（修或 tracked follow-up）。

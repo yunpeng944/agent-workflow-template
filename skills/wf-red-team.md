@@ -21,8 +21,6 @@ user-invocable: true
 
 **调用语法**：`/wf-red-team [preset] [--mode=<simplification>] <task>`
 
-**Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制为 dispatch payload。
-
 ## When to use / Skip if
 
 **用**：触及凭证 / token / admin / hook 权限边界；状态文件读写、session id 生成、replay 防御；CLI / JSON 契约中带语义的字段（认证、引用、外部输入）；第三方 API 边界、跨端 (`src/gateway/ui/` ↔ Node.js) 信任边界。
@@ -37,8 +35,6 @@ user-invocable: true
 
 ### Stage 1 — PLANNER（威胁模型 + 防御方案）
 
-````
-===== BEGIN STAGE-1-PLANNER PROMPT =====
 基于以下需求与本仓 AGENTS.md + `docs/agents-governance.md`，以**威胁视角**（而非功能视角）组织方案：
 
 **决策门**：需求是否含阻断性歧义 / 未明示的信任假设？
@@ -65,16 +61,12 @@ user-invocable: true
 [PASTE REQUIREMENT + AFFECTED SUBSYSTEMS HERE]
 ===== END STAGE-1 REQUIREMENT =====
 ```
-===== END STAGE-1-PLANNER PROMPT =====
-````
 
 **Artifact**：澄清清单 或 完整方案（11 项，重点 #2 滥用路径与 #7 negative 测试 1:1 映射）。
 **Handoff to Stage 2**：每条滥用路径有对应 negative 测试 design + 所有路径 / 命令 / API 能在仓库中验证存在。
 
 ### Stage 2 — IMPLEMENTER（Phase A 校验 + Phase B 实现 + negative 测试）
 
-````
-===== BEGIN STAGE-2-IMPLEMENTER PROMPT =====
 本任务在**高风险面**。两阶段执行：
 
 **Phase A — 方案对仓库的可执行性校验（不写代码）**：
@@ -124,16 +116,12 @@ Phase B 后两个块：
 [PASTE STAGE-1 PLAN HERE]
 ===== END STAGE-1 PLAN =====
 ```
-===== END STAGE-2-IMPLEMENTER PROMPT =====
-````
 
 **Artifact**：PHASE-A RESULT + SUMMARY + DIFF。
 **Handoff to Stage 3**：Phase B 完成 + `./tasks.sh validate` 绿 → 传 STAGE-2 DIFF（**不含 SUMMARY**）给 Stage 3。
 
 ### Stage 3 — RED-TEAMER（fresh subagent，攻击者视角）
 
-````
-===== BEGIN STAGE-3-RED-TEAMER PROMPT =====
 你是**红队 reviewer**——不是合规审计师，是想方设法让这段代码崩 / 越权 / 泄露 / 静默丢数据的对手。不要重新实现，也不要奖励防御充分性；只输出"我能怎么让它出事"。
 
 **独立性约束**：本 prompt 含 plan + diff；IMPLEMENTER summary 不在 context——基于 diff 形成独立红队 review，避免被自评偏置。
@@ -167,16 +155,12 @@ Phase B 后两个块：
 [PASTE git diff OUTPUT HERE]
 ===== END STAGE-2 DIFF =====
 ```
-===== END STAGE-3-RED-TEAMER PROMPT =====
-````
 
 **Artifact**：分级清单 + file:line + 攻击复现描述 + 范围外攻击面声明。
 **Handoff to Stage 4**：任一 🔴 必须进 Stage 4 加固；🟡 视范围决定。
 
 ### Stage 4 — IMPLEMENTER（加固 + 每条 🔴 配 negative 测试）
 
-````
-===== BEGIN STAGE-4-IMPLEMENTER PROMPT =====
 按红队 review 清单修代码：
 1. **所有 🔴 必改**，**且每条 🔴 必配一条对应 negative 测试**——先写测试（红 = 复现攻击），再改实现（绿 = 攻击被挡）
 2. 🟡 处理（**不允许只留 TODO**）：本次直接修 OR tracked follow-up（含 file:line + 描述 + 责任人 + 残留风险等级）
@@ -205,8 +189,6 @@ Phase B 后两个块：
 [PASTE STAGE-3 RED-TEAM REVIEW HERE]
 ===== END STAGE-3 REVIEW =====
 ```
-===== END STAGE-4-IMPLEMENTER PROMPT =====
-````
 
 **Artifact**：SUMMARY + DIFF + 全绿 `./tasks.sh validate` + 每条 🔴 ↔ negative 测试映射 + follow-up 清单。
 **Stop**：`./tasks.sh validate` 绿 + 所有 🔴 处理且配测试 + 所有 🟡 处理（修或 tracked follow-up）+ 残留风险显式声明。
