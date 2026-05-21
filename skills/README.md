@@ -6,8 +6,8 @@
 
 运行时镜像位置是 `.claude/skills/` 与 `.agents/skills/`。
 
-每个源文件都是紧凑的工作流契约，包含 YAML frontmatter 与五个必需章节：
-Role, Goal, Boundaries, Validation, and Output.
+每个源文件都是紧凑的工作流契约，包含 YAML frontmatter 与核心章节：
+Goal, Orchestration, When to use / Skip if, Stages, and Simplification。
 
 镜像由脚本生成，确保两个工具加载同一份工作流文本。
 
