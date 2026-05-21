@@ -11,6 +11,8 @@
 - 顶层 `tasks.sh` 调度（POSIX bash），`./tasks.sh validate` 收口
 - 工作流选择 / Role-Model 映射 / 调度优先级在 [docs/workflows.md](docs/workflows.md)
 
+**贡献流程**：见 [CONTRIBUTING.md](CONTRIBUTING.md) ——git 是 spec 真源，人 + agent 都走 PR。
+
 ## 优先做什么
 
 - **任何修改前**：判断是改「模板自身」（skills/ adapters/ docs/workflows.md 等通用层）还是「项目特定规则」（下游 fork 后追加的部分）。模板自身改动要保持语言中性 / 仅依赖 Node 20.11+ stdlib（无 npm install）。

@@ -55,6 +55,10 @@ cd my-project
 - **下游可覆盖**：[AGENTS.md](AGENTS.md) 提供「项目特定规则」占位节，下游 fork 后扩展。
 - **workflow 独立性**：每个 `wf-*` skill 内置的 paste boundary / fresh subagent / SCOPE-EXPANSION 是设计的一部分；改 prompt 前先读 [docs/workflows.md](docs/workflows.md) 三层边界节。
 
+## Contributing
+
+见 [CONTRIBUTING.md](CONTRIBUTING.md) ——git 是 spec 真源，人 + agent 都通过 PR 提议 spec 演进。
+
 ## 关于 skill 内的 `pnpm` 示例
 
 `skills/wf-incident-rescue.md` 与 `skills/wf-convoy-refactor.md` 内残留少量 `pnpm install --frozen-lockfile` / `pnpm typecheck` 等示例 —— 这些是 monorepo TypeScript 场景的 **procedural 举例**（在 backtick 内、由「如」上下文引导），下游按自家包管理器替换为相应命令即可（`npm ci` / `yarn install --frozen-lockfile` / `mypy .` / `cargo check` 等）。模板自身的调度命令（`./tasks.sh validate` 等）是 host-agnostic 的。
