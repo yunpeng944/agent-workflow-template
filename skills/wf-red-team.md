@@ -1,10 +1,12 @@
 ---
 name: wf-red-team
 description: 4-stage adversarial workflow for high-risk surfaces — PLANNER threat-models, IMPLEMENTER implements + negative tests, RED-TEAMER red-teams independently, IMPLEMENTER hardens.
-argument-hint: '[preset] [--mode=<name>] <task>'
+argument-hint: '[preset] <task>'
 disable-model-invocation: true
 user-invocable: true
 ---
+
+> **共用约定**：fresh subagent / paste boundary / SCOPE-EXPANSION / DIFF block / dispatch ledger / `./tasks.sh validate` 收口 / 同产品 preset 警告 / tracked follow-up 等 8 项共用约束见 [docs/skill-prompt-conventions.md](../docs/skill-prompt-conventions.md)。
 
 ## Goal
 
@@ -27,7 +29,7 @@ user-invocable: true
 
 **跳过**：单纯新功能 / 重构、不动安全相关面 → `wf-coding-relay`；大重构 → `wf-convoy-refactor`；疑难 bug → `wf-incident-rescue`；文档 → `wf-coauthor-doc`。
 
-**降级**：单点 patch ≤ 50 行、已有同类 negative 测试 → `harden-and-test`（用既有 issue 代 Stage 1 plan，跑 Stage 2-4）；单测就能盯死的输入消毒 → `single-agent-with-redteam-prompt`。
+**降级**：本 workflow 不提供 mode；详见 Simplification 段。
 
 ---
 
@@ -213,8 +215,12 @@ Phase B 后两个块：
 
 ## Simplification
 
-- **`full-redteam`**：4 阶段（默认）。凭证 / 状态文件 / 跨端边界 / 契约表面改动
-- **`harden-and-test`**：用既有 issue / 设计文档代替 Stage 1 plan（作为 Stage 2/4 prompt 的 STAGE-1 PLAN 输入），跑 Stage 2-4 跳 Stage 1。适用：已知漏洞需补防御 + 测试，威胁建模已外部完成
-- **`single-agent-with-redteam-prompt`**：单 role 单 session 自跑红队 prompt 自审 + 修。适用：单点输入校验 / 日志清洗，≤ 50 行改动
+本 workflow 不提供显式降级 mode flag；默认即完整 4 阶段。
 
-降级 3 维度：**攻击面广度**（跨边界必须 full-redteam）/ **失败影响**（数据泄露 / 权限提升必须 full-redteam）/ **可挡度**（一条测试钉死 → single-agent-with-redteam-prompt）。
+**高风险面降级硬门**：凭证 / 权限 / 状态文件 / 跨端信任边界改动**禁止降级**——任何"小行数高影响"组合（如 token 验证 40 行）都必须走完整 4 段。
+
+**何时不该走本 workflow**：
+- 单 typo / 文案 → 直接改
+- 不触及凭证 / 权限 / 状态 / 跨端 → 改走 `wf-coding-relay`
+
+降级路径不存在；要么走完整 4 阶段，要么走其他 workflow，不存在中间档。

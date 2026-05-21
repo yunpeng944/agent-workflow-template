@@ -1,12 +1,14 @@
 ---
 name: wf-bake-off
 description: 3-stage A/B selection — CRITERIA-LOCKER locks mechanical criteria, PROTOTYPER builds A/B in parallel, SCORER scores strictly by Stage 1 criteria.
-argument-hint: '[preset] [--mode=<name>] <task>'
+argument-hint: '[preset] [--mode=paper-bakeoff] <task>'
 disable-model-invocation: true
 user-invocable: true
 ---
 
 <!-- generated · do not edit · source: skills/wf-bake-off.md -->
+
+> **共用约定**：fresh subagent / paste boundary / SCOPE-EXPANSION / DIFF block / dispatch ledger / `./tasks.sh validate` 收口 / 同产品 preset 警告 / tracked follow-up 等 8 项共用约束见 [docs/skill-prompt-conventions.md](../docs/skill-prompt-conventions.md)。
 
 ## Goal
 
@@ -27,9 +29,9 @@ user-invocable: true
 
 **用**：架构 / 框架 / 库 / build 工具 / 数据存储 / 通信协议选型；性能策略对比；跨子系统 schema 形态对比；决策**难回退**或**影响面大**——一旦写进代码会拖累 N 个后续决策。
 
-**跳过**：单候选实现 / 候选只是稻草人 → `wf-coding-relay`；已在用 A 只想换 B（migration）→ `wf-convoy-refactor`；选型已定要落地 → `wf-coding-relay`；高风险面带选型成分 → 先 `wf-bake-off` 选型、再 `wf-red-team` 加固。
+**跳过**：单候选实现 / 候选只是稻草人 → `wf-coding-relay`；已在用 A 只想换 B（migration）→ `wf-convoy-refactor`；选型已定要落地 → `wf-coding-relay`；高风险面带选型成分 → 先 `wf-bake-off` 选型、再 `wf-red-team` 加固；**prototype 预估 > 500 行**或不确定 scope → 先 `wf-spike` 摸边再 bake-off。
 
-**降级**：两候选都熟、决策可逆 → `paper-bakeoff`；A 看起来明显更好但需 sanity check → `single-prototype-poc`。
+**降级**：两候选均有官方文档 + 公开 benchmark 或既有 prototype + 决策可逆 → `--mode=paper-bakeoff`。
 
 ---
 
@@ -113,6 +115,7 @@ user-invocable: true
 - prototype scope 与平行的另一候选**完全相同**（功能集、I/O 形态、benchmark 输入）——bake-off 公平前提
 - **不许优化你这边**：不加只对本候选有利的 feature；不偷砍只对本候选不利的 corner case
 - 上限：**≤ 500 行 / ≤ 4 小时**。超出说明 scope 太大或本候选不适配 → **报 BLOCKED-OVER-BUDGET 而非继续**
+- **Setup 公平性**：setup script（安装依赖 / 初始化 / 配 fixture）不计入 ≤ 500 LOC，但必须列出 setup 步骤清单 + 占用时间。两候选 setup 步骤数差异 > 50% 时 SCORER 须在 Caveats 警示公平性疑虑（如 A 需 3 步 / B 需 8 步——B 复杂度可能是真实 cost 而非 prototype artifact）
 
 执行步骤：
 1. 通读 Stage 1 BAKEOFF-CRITERIA，确认 Mechanical Metrics 测量命令——为本候选**至少跑一次**这些命令并记原始输出
@@ -277,8 +280,12 @@ loser 在哪些维度被压（具体行 / 具体差值）+ 不可被 future impr
 
 ## Simplification
 
-- **`full-bakeoff`**：3 阶段（默认）。架构 / 框架 / 数据存储等难回退决策
-- **`paper-bakeoff`**：Stage 1 + Stage 3，跳 Stage 2 prototype。用纸面材料替代（已有 prototype / 文档 / 公开 benchmark）。适用：两候选都熟、可逆、prototype 成本 > 决策成本。**Stage 3 输入格式**：仍按 `STAGE-2 PROTOTYPE-[NAME]` 块结构包装纸面材料——Status 填 `COMPLETED-PAPER`、Implementation Summary 写"基于既有 X 文档 / Y 公开 benchmark / Z 旧 prototype"、Files 写"n/a (paper)"、Mechanical Metrics Raw 引用文档原文 + URL、Subjective Dimension Proxies 同上；Stage 3 评分逻辑不变，Rationale 段需声明数据来源
-- **`single-prototype-poc`**：Stage 1 + Stage 2 单候选 (A) + 简化 Stage 3（"A 是否过基本线"判定，B 作 theoretical fallback）。适用：A 看起来明显更好但需 validate；B 不值得投入
+默认完整 3 阶段。**保留一个降级 mode**：`--mode=paper-bakeoff`。
 
-降级 3 维度：**回退成本**（低 → paper-bakeoff；中高 → full-bakeoff）/ **prototype 可行性**（≤ 500 行能实现 → prototype；不能 → paper-bakeoff）/ **候选熟悉度**（双方都熟 → paper-bakeoff；至少一方陌生 → 必须 prototype）。
+- **`paper-bakeoff`**：Stage 1 + Stage 3，跳 Stage 2 prototype。用纸面材料替代。**触发判据**：两候选均有官方文档 + 公开 benchmark 或既有 prototype + 决策可逆。**Stage 3 输入格式**：仍按 `STAGE-2 PROTOTYPE-[NAME]` 块结构包装纸面材料——Status 填 `COMPLETED-PAPER`、Implementation Summary 写"基于既有 X 文档 / Y 公开 benchmark / Z 旧 prototype"、Files 写"n/a (paper)"、Mechanical Metrics Raw 引用文档原文 + URL、Subjective Dimension Proxies 同上；Stage 3 评分逻辑不变，Rationale 段需声明数据来源。
+
+**何时不该走本 workflow**：
+- 单候选无对比：走 `wf-spike`（探索）或 `wf-coding-relay`（直接实现）
+- 决策可逆 + 实施成本极低：直接试一个，不值得 bake-off
+
+无其他降级路径——非 paper-bakeoff 场景要么走完整 3 阶段，要么不走 workflow。

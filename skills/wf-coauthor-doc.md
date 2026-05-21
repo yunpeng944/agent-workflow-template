@@ -1,10 +1,12 @@
 ---
 name: wf-coauthor-doc
 description: 3-stage doc co-authoring for AGENTS.md / SKILL.md / governance docs — PLANNER drafts, AUDITOR strictly verifies, FINALIZER synthesizes audit into commit-ready text.
-argument-hint: '[preset] [--mode=<name>] <task>'
+argument-hint: '[preset] <task>'
 disable-model-invocation: true
 user-invocable: true
 ---
+
+> **共用约定**：fresh subagent / paste boundary / SCOPE-EXPANSION / DIFF block / dispatch ledger / `./tasks.sh validate` 收口 / 同产品 preset 警告 / tracked follow-up 等 8 项共用约束见 [docs/skill-prompt-conventions.md](../docs/skill-prompt-conventions.md)。
 
 ## Goal
 
@@ -29,7 +31,7 @@ user-invocable: true
 
 **跳过**：写代码 → `wf-coding-relay`；高风险面代码 → `wf-red-team`；大重构 → `wf-convoy-refactor`；仅修 typo → 直接改。
 
-**降级**：小幅改动（< 30 行、单段内）→ `audit-only`；极简改动（typo / 错锚点 / 单行）→ 直接改 + 跑 `./tasks.sh validate`。
+**降级**：本 workflow 不提供 mode；详见 Simplification 段。
 
 ---
 
@@ -101,7 +103,7 @@ user-invocable: true
    - 列**与上层冲突**的条目 → 🔴 必明示优先级或撤回
 
 5. **可机械校验执行**：
-   - **草稿落盘策略**：把 Stage 1 草稿写入目标路径（在 worktree 或临时 branch，避免污染 main）；若目标是 `skills/<name>.md`，**必须先跑 `./tasks.sh sync-skills`** 重生镜像，否则 `./tasks.sh validate` 中的 `sync-skills-check` 必失败
+   - **草稿落盘策略**：把 Stage 1 草稿写入 `/tmp/coauthor-draft-<run-id>/<target-path>`（**不进主 worktree**），在该路径跑 `./tasks.sh validate` 等命令；若目标是 `skills/<name>.md`，**必须先跑 `./tasks.sh sync-skills`** 重生镜像，否则 `./tasks.sh validate` 中的 `sync-skills-check` 必失败。FINALIZER 落盘前由编排者把 `/tmp/coauthor-draft-<run-id>/` 内容 rsync 到主仓 worktree
    - 跑 `./tasks.sh check-structure` + `./tasks.sh check-refs` + `./tasks.sh validate`（收口）
    - 记每条命令退出码 + 错误清单 + root cause + 修复建议
    - 说明 working tree 处置建议（保留供 Stage 3 改写 / `git restore` 丢弃）
@@ -136,8 +138,6 @@ user-invocable: true
 ```
 
 约束：不重写草稿、不擅自重排结构；若发现需结构性改动，标 🔴 在 Stage 3 prompt 中说明让 FINALIZER 决定。
-
-audit-only 模式：`STAGE-1 DRAFT` 块填目标文件当前内容，块首标 `# Target: <path>`；设计说明可写"既有文本审计"或省略。
 
 ```
 ===== BEGIN STAGE-1 DRAFT =====
@@ -211,8 +211,10 @@ SCOPE-EXPANSION (如有): 内容 + why
 
 ## Simplification
 
-- **`full-coauthor`**：3 阶段（默认）。新建文档 / 大改 / 跨层级重组
-- **`audit-only`**：跳 Stage 1，从既有文本起步跑 Stage 2 审计，Stage 3 润色。适用：小幅改动（< 30 行、单段内）。Stage 2 的 `STAGE-1 DRAFT` 块填目标文件当前内容，并在块首标 `# Target: <path>`；设计说明可写"既有文本审计"或省略。
-- **`mechanical-fix`**：直接改 + 跑 `./tasks.sh validate`（目标在 `skills/<name>.md` 时记得先 `./tasks.sh sync-skills`）。适用：typo / 错锚点 / 单行修订
+本 workflow 不提供显式降级 mode flag；默认即完整 3 阶段。
 
-降级 3 维度：**规模**（< 30 行 + 单段 → audit-only）/ **是否新建**（新建 / 替换 → 必须 full-coauthor）/ **是否动元规则**（动元规则 / 边界 / anti-skip → 必须 full-coauthor，缺起草上下文不可走 audit-only）。
+**何时不该走本 workflow**：
+- typo / 错锚点 / 单行修订 → 直接改 + `./tasks.sh validate`（目标为 `skills/wf-*.md` 时记得先 `./tasks.sh sync-skills`）
+- 已有外部 spec / RFC 作为 ground truth：仅需对照检查 → 走 `wf-code-review`
+
+降级路径不存在；要么走完整 3 阶段，要么走 AGENTS.md「何时不用 workflow」，不存在中间档。

@@ -48,20 +48,59 @@ slash command 第一位 token 形如 `<vendor1>-<vendor2>`（可省，默认 `cl
 | `<v1>-<v2>` | vendor1 跑 A 段 role；vendor2 跑 B 段 role                             |
 | `custom`    | 显式 `--<role>=<model>` 覆盖该 skill 全部 role；缺任一 → **fail-fast** |
 
-- **A 段 role 集**（计划 / 评审 / 综合）：PLANNER / REVIEWER / REVIEWER-A / REVIEWER-B / RED-TEAMER / AUDITOR / FINALIZER / RECONCILER / CRITERIA-LOCKER / SCORER / FIX-DESIGNER / DIAGNOSER-A / PROBE-DESIGNER / SYNTHESIZER
-- **B 段 role 集**（实现 / 复现 / 二分 / 探索）：IMPLEMENTER / PROTOTYPER / REPRODUCER / BISECTOR / FIX-IMPLEMENTER / DIAGNOSER-B / EXPLORER
+- **A 段 role 集**（计划 / 评审 / 综合）：PLANNER / REVIEWER / REVIEWER-A / RED-TEAMER / AUDITOR / FINALIZER / RECONCILER / CRITERIA-LOCKER / SCORER / FIX-DESIGNER / DIAGNOSER-A / PROBE-DESIGNER / SYNTHESIZER
+- **B 段 role 集**（实现 / 复现 / 二分 / 探索）：IMPLEMENTER / PROTOTYPER / REPRODUCER / BISECTOR / FIX-IMPLEMENTER / DIAGNOSER-B / REVIEWER-B / EXPLORER
 - **single-role workflow 例外**：当 skill 默认只用单一 A 段 role（如 `wf-code-review` single-mode 只用 REVIEWER），preset 中的 vendor2 被忽略；仅当 skill 升级到含 B 段 role 的多段模式（如 `wf-code-review --mode=double-review` 启用 REVIEWER-A / REVIEWER-B）时 vendor2 才生效。skill 真源在 Orchestration 段标注 single-role 例外。
 
 **默认 `claude-codex`**：A 段 Claude / B 段 Codex。举例如 `claude-claude` / `codex-codex` / `codex-claude`——所有合法 pair 由字典 N×N 自动生成，**docs / skill 不再枚举**。
+
+### Preset Policy（跨 vendor 强制 / 警告 / 允许 三档）
+
+| 场景 | preset policy | 触发条件 |
+|---|---|---|
+| **强制跨 vendor** | `v1 != v2` 必须 | 暂无（保留扩展位） |
+| **同 vendor 警告** | 打印警告但不阻塞 | `wf-second-opinion` / `wf-bake-off` / `wf-code-review --mode=double-review` 且 `v1 == v2` |
+| **允许同 vendor** | 静默通过 | 其余 6 个 wf-\*（独立性靠 role 视角切换 / INVARIANTS / fresh subagent，不依赖跨厂商） |
+
+实现不需完整 N×N 矩阵，按规则表表达即可。
+
+### Role Slot → Custom Flag 总表
+
+| Skill | Role slots | `--custom` flag 名 |
+|---|---|---|
+| wf-coding-relay | PLANNER / IMPLEMENTER / REVIEWER | `--planner=<m>` / `--implementer=<m>` / `--reviewer=<m>` |
+| wf-red-team | PLANNER / IMPLEMENTER / RED-TEAMER | `--planner=<m>` / `--implementer=<m>` / `--red-teamer=<m>` |
+| wf-convoy-refactor | PLANNER / IMPLEMENTER / REVIEWER | `--planner=<m>` / `--implementer=<m>` / `--reviewer=<m>` |
+| wf-coauthor-doc | PLANNER / AUDITOR / FINALIZER | `--planner=<m>` / `--auditor=<m>` / `--finalizer=<m>` |
+| wf-second-opinion | DIAGNOSER-A / DIAGNOSER-B / RECONCILER | `--diagnoser-a=<m>` / `--diagnoser-b=<m>` / `--reconciler=<m>` |
+| wf-bake-off | CRITERIA-LOCKER / PROTOTYPER / SCORER | `--criteria-locker=<m>` / `--prototyper=<m>` / `--scorer=<m>` |
+| wf-incident-rescue | REPRODUCER / BISECTOR / FIX-DESIGNER / FIX-IMPLEMENTER | `--reproducer=<m>` / `--bisector=<m>` / `--fix-designer=<m>` / `--fix-implementer=<m>` |
+| wf-spike | PROBE-DESIGNER / EXPLORER / SYNTHESIZER | `--probe-designer=<m>` / `--explorer=<m>` / `--synthesizer=<m>` |
+| wf-code-review | REVIEWER（single-mode）/ REVIEWER-A / REVIEWER-B / RECONCILER（`--mode=double-review`） | `--reviewer=<m>` 或 `--reviewer-a=<m> --reviewer-b=<m> --reconciler=<m>` |
+
+**unknown flag fail-fast**——adapter 解析时遇到不在本表的 flag → 报错列可用 flag 清单，不静默忽略。
 
 **同产品 preset 警告**（`wf-second-opinion` / `wf-bake-off` / `wf-code-review --mode=double-review`）：当 `vendor1 == vendor2`（任意同 vendor pair）时，这三 skill 的独立性仅靠 session 隔离，丢失跨厂商多样性。编排者打印静态警告（不阻塞）。触发时机：second-opinion 在 Stage 1 dispatch 前；bake-off 在 Stage 2 dispatch 前；wf-code-review --mode=double-review 在 Stage 2 dispatch 前（single-mode 单一 A 段 role 无 B 对照，不触发）。其他 6 个 wf-\* 不触发——独立性靠 role 视角切换 / INVARIANTS 机械校验 / fresh subagent 隔离。
 
 ### simplification × preset 两轴
 
 - **preset**：选 model 编排（位置参数）
-- **`--mode=<name>`**：选 simplification 模式（每 skill 自定义，命名 flag）
+- **`--mode=<name>`**：选保留的降级 / 升级 mode（仅 4 个 skill 接受此 flag：`wf-bake-off` / `wf-incident-rescue` / `wf-spike` / `wf-code-review`；共 5 个 mode 值：`paper-bakeoff` / `known-cause-fix` / `revert-only` / `learning-only` / `double-review`）
 
 例：`/wf-bake-off claude-claude --mode=paper-bakeoff <task>`
+
+**其他 5 个 skill**（`wf-coding-relay` / `wf-red-team` / `wf-convoy-refactor` / `wf-coauthor-doc` / `wf-second-opinion`）**不接受 `--mode` flag`**——默认即完整流程。
+
+### 全局降级硬门（任何 skill 任何 mode 都不可绕过）
+
+以下场景**禁止**走任何 `--mode=*` 降级 / 任何 skill 的「何时不该走本 workflow」短路；必须走完整流程：
+
+- **安全 / 凭证 / 权限改动**：含 `crypto` / `auth` / `token` / `session` / `password` / `secret` / `*.state.json` / `secrets/`
+- **公共 API / 契约改动**：跨子系统 CLI / JSON schema / IPC / external API surface
+- **跨 ≥ 3 模块**：`git diff --name-only | awk -F/ '{print $1}' | sort -u | wc -l` ≥ 3
+- **决策不可回退 / 回退窗口 > 1 周**：写进核心代码且换回需 ≥ 5 工作日
+
+任一触发即"完整流程"，各 skill Simplification 段引用本节，不再各自重复。
 
 **真源**：skill 真源是 [skills/wf-\<name\>.md](../skills/)；`.claude/skills/`（Claude Code 消费）与 `.agents/skills/`（Codex CLI 消费）是 `./tasks.sh sync-skills` 生成的镜像。
 
@@ -71,23 +110,83 @@ slash command 第一位 token 形如 `<vendor1>-<vendor2>`（可省，默认 `cl
 
 **先问后做**：同任务对应多 workflow（如 refactor + 高风险面）→ 与用户确认主路径；workflow 中段需切换 → 明示理由。
 
-**禁止**：直接编辑 `.claude/skills/wf-*/SKILL.md` 或 `.agents/skills/wf-*/SKILL.md`（generated）；跨 workflow 复制 prompt 段拼新流程（新需求走 `wf-coauthor-doc` 建新 skill）；跳过 Stage 3/4 review-fix 直接 commit（除非用 Simplification 降级）。
+**禁止**：直接编辑 `.claude/skills/wf-*/SKILL.md` 或 `.agents/skills/wf-*/SKILL.md`（generated）；跨 workflow 复制 prompt 段拼新流程（新需求走 `wf-coauthor-doc` 建新 skill）；跳过 Stage 3/4 review-fix 直接 commit。
+
+## 60 秒自检（机械触发判据，按优先级判定）
+
+接到新任务时按 1 → 9 顺序 grep / 判断，**第一个匹配的判据即触发对应 workflow，不再向下查**。
+
+1. **触凭证 / 权限 / 状态 / 跨端边界？**（4 项任一可 grep）
+   - 改动含 `crypto` / `auth` / `token` / `session` / `password` / `secret` 字串
+   - 改动路径含 `*.state.json` / `secrets/` / `credentials/` / `.env*`
+   - 跨 UI ↔ service / client ↔ runtime 信任边界入口
+   - 已有 `wf-code-review` 输出含安全维度 ≥ 2 🔴/🟡
+   → **`wf-red-team`**（高风险面禁降级）
+
+2. **失败测试 / 断分支 / CI 红？**（任一）
+   - `./tasks.sh validate` 或项目自家 test 命令 exit ≠ 0
+   - PR / commit 标签含 `regression` / `revert` / `fix:` / `hotfix:`
+   - root cause 已知 + Equivalent Reproducer Command 已给 → 直接 `--mode=known-cause-fix`
+   - first-bad commit 改动 ≤ 30 行 + 独立 + 无后续依赖 → 直接 `--mode=revert-only`
+   → **`wf-incident-rescue`**
+
+3. **改公共抽象 / 跨 ≥ 3 模块 / ≥ 5 文件？**（≥ 2 项任一）
+   - `git diff --name-only HEAD~..HEAD | wc -l` ≥ 5
+   - `git diff --name-only HEAD~..HEAD | awk -F/ '{print $1}' | sort -u | wc -l` ≥ 3
+   - 改动含 module entry points（`index.*` / `mod.rs` / `__init__.py` / `lib.rs`）
+   - 触公共 API / 跨子系统 type 流向
+   → **`wf-convoy-refactor`**
+
+4. **PR / 外部 diff / 历史代码审计？**（任一）
+   - 你不是作者；要看别人的 commits / PR / diff
+   - 改动 ≥ 8 文件 / 跨 ≥ 3 模块 / 触凭证或公共 API / single-mode 🔴 ≥ 3 → 直接 `--mode=double-review`
+   → **`wf-code-review`**
+
+5. **疑难 bug / 单 agent 多轮转圈？**（任一）
+   - 同问题已派 ≥ 2 轮 agent 但 hypothesis 互相矛盾
+   - 跨 ≥ 2 子系统现象（"前端崩，state 是 Node 写的"）
+   - 临 release 高风险 bug
+   → **`wf-second-opinion`**
+
+6. **架构 / 框架 / 库 / 性能策略选型？**（任一）
+   - ≥ 2 候选 + 决策难回退（要写进核心代码）
+   - 任务文本含 "用 X 还是 Y" / "迁移到 Z" / "选哪个"
+   - 两候选均有官方文档 + 公开 benchmark + 决策可逆 → 直接 `--mode=paper-bakeoff`
+   → **`wf-bake-off`**
+
+7. **开放探索 / 不熟领域 / 概念验证？**（任一）
+   - 候选 < 2 或判据不清
+   - 任务文本含 "X 能不能跑通" / "X 性能如何" / "摸清 Y"
+   - 答案在权威文档 / 源码 / RFC 内 + 不需跑代码 → 直接 `--mode=learning-only`
+   → **`wf-spike`**
+
+8. **AGENTS.md / SKILL.md / governance 文档新建或大改？**（任一）
+   - 改动路径含 `AGENTS.md` / `skills/wf-*.md` / `docs/agents-governance.md` / `docs/workflows.md` / `governance-snippets/`
+   - 任务含 "写 skill" / "起草 governance" / "新建文档"
+   → **`wf-coauthor-doc`**
+
+9. **以上都不是 + 新功能 / 重构 / 跨多文件 / 不熟模块？**
+   → **`wf-coding-relay`**（默认开发 workflow）
+
+**判据冲突时按 1 → 9 顺序优先**（如同时触发"凭证 + 跨 3 模块"→ `wf-red-team` 而非 `wf-convoy-refactor`）。
+
+**何时不用 workflow**：单文件 typo / 改文案 / 已写过 3+ 次的同类模式 / 已熟模块 + 不动公共 API + 不触上述 1-2/4 项——直接改 + `./tasks.sh validate` 即可。
 
 ## 快速选择
 
-| 任务特征                                              | 主 workflow                                           | 降级路径                                                                                   |
-| ----------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| 新功能 / 跨多文件 / 不熟模块 / 触及契约或跨端边界     | [wf-coding-relay](../skills/wf-coding-relay.md)       | < 200 行单文件 + 已熟模块 → `plan-and-implement`；typo / 文案 → `single-agent`             |
-| 凭证 / token / 状态文件 / 权限 / 跨端信任边界         | [wf-red-team](../skills/wf-red-team.md)               | 单点输入校验 ≤ 50 行 → `single-agent-with-redteam-prompt`                                  |
-| ≥ 3 模块 / ≥ 5 文件 / 改公共抽象的大重构              | [wf-convoy-refactor](../skills/wf-convoy-refactor.md) | 可清晰切 ≤ 2 批且同质 → `dual-batch`；机械 rename → `codemod-pass`                         |
-| AGENTS.md / SKILL.md / governance 类文档新建或大改    | [wf-coauthor-doc](../skills/wf-coauthor-doc.md)       | < 30 行单段内 → `audit-only`；typo / 单行 → `mechanical-fix`                               |
-| 疑难 bug / 单 agent 已转圈 / 跨子系统问题             | [wf-second-opinion](../skills/wf-second-opinion.md)   | 已有 1 份诊断 → `single-counterpoint`；1-2 分钟 sanity check → `quick-poll`                |
-| 架构 / 框架 / 库 / 性能策略选型（难回退）             | [wf-bake-off](../skills/wf-bake-off.md)               | 都熟悉 + 可逆 → `paper-bakeoff`；A 明显占优需 validate → `single-prototype-poc`            |
-| 失败测试 / 断分支 / regression / CI 红                | [wf-incident-rescue](../skills/wf-incident-rescue.md) | 已知 root cause → `known-cause-fix`；< 10 commit → `no-bisect`；独立可回退 → `revert-only` |
-| 开放探索 / 不熟领域 / 概念验证（候选 < 2 或判据不清） | [wf-spike](../skills/wf-spike.md)                     | 单一明确 probe → `single-probe`；无需跑代码 → `learning-only`                              |
-| 外部 diff / PR review / 历史代码审计（无 PLAN 对照）  | [wf-code-review](../skills/wf-code-review.md)         | 单一维度 → `focus-review`；粗看 → `quick-comment`；高价值 PR → `double-review`（升级）     |
+| 任务特征                                              | 主 workflow                                           | 降级 / 升级 mode                                                                          |
+| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| 新功能 / 跨多文件 / 不熟模块 / 触及契约或跨端边界     | [wf-coding-relay](../skills/wf-coding-relay.md)       | —（默认即完整流程；lite 场景走 AGENTS.md「何时不用 workflow」）                          |
+| 凭证 / token / 状态文件 / 权限 / 跨端信任边界         | [wf-red-team](../skills/wf-red-team.md)               | —（默认即完整流程；高风险面禁降级）                                                       |
+| ≥ 3 模块 / ≥ 5 文件 / 改公共抽象的大重构              | [wf-convoy-refactor](../skills/wf-convoy-refactor.md) | —（默认即完整流程；< 3 模块走 `wf-coding-relay`）                                         |
+| AGENTS.md / SKILL.md / governance 类文档新建或大改    | [wf-coauthor-doc](../skills/wf-coauthor-doc.md)       | —（默认即完整流程；typo / 单行走 AGENTS.md「何时不用 workflow」）                         |
+| 疑难 bug / 单 agent 已转圈 / 跨子系统问题             | [wf-second-opinion](../skills/wf-second-opinion.md)   | —（默认即完整流程；已知 root cause 走 `wf-incident-rescue`）                              |
+| 架构 / 框架 / 库 / 性能策略选型（难回退）             | [wf-bake-off](../skills/wf-bake-off.md)               | `--mode=paper-bakeoff`（两候选均有官方文档 + 公开 benchmark + 决策可逆）                  |
+| 失败测试 / 断分支 / regression / CI 红                | [wf-incident-rescue](../skills/wf-incident-rescue.md) | `--mode=known-cause-fix`（root cause 已定位）<br>`--mode=revert-only`（first-bad 改动小独立） |
+| 开放探索 / 不熟领域 / 概念验证（候选 < 2 或判据不清） | [wf-spike](../skills/wf-spike.md)                     | `--mode=learning-only`（纯文档查询型 + 既存权威源）                                       |
+| 外部 diff / PR review / 历史代码审计（无 PLAN 对照）  | [wf-code-review](../skills/wf-code-review.md)         | `--mode=double-review`（**升级**：改动 ≥ 8 文件 / 跨 ≥ 3 模块 / 触凭证或公共 API / 🔴 ≥ 3） |
 
-**何时不用 workflow**：单文件 typo / 改文案 / 已写过 3+ 次的同类模式——能在 60 秒内说清"该改哪、为什么改、怎么验证"且不触及契约 / 高风险面。
+本表是「60 秒自检」的详细参照——routing 决策已在前段机械化；本表用于二次校对 task 特征与 mode 触发条件。
 
 ## 9 个 workflow 速览
 
@@ -103,7 +202,7 @@ slash command 第一位 token 形如 `<vendor1>-<vendor2>`（可省，默认 `cl
 | [wf-spike](../skills/wf-spike.md)                     | 3 段：PROBE-DESIGNER（≤ 3 可观察子问题） → EXPLORER（≤ 500 LOC 丢弃式） → SYNTHESIZER（4 态决策） | 问题收敛 + 代码可丢弃 + 必含 NO-GO                  |
 | [wf-code-review](../skills/wf-code-review.md)         | 1 段（默认）：REVIEWER 6 维度无 PLAN 评审；升级 `double-review` 3 段双盲 + reconcile              | REVIEWER 不许猜规格；不含实现段                     |
 
-每个 skill 都有 `## Simplification` 段定义降级变体（`full-*` / 中间 / `single-*`）。
+每个 skill 都有 `## Simplification` 段：4 个 skill（`wf-bake-off` / `wf-incident-rescue` / `wf-spike` / `wf-code-review`）列保留的 mode + 触发判据；其余 5 个 skill 段内说明"默认即完整流程，无 mode flag"+「何时不该走本 workflow」路径。
 
 ## 跨 workflow 流转
 
@@ -122,14 +221,14 @@ slash command 第一位 token 形如 `<vendor1>-<vendor2>`（可省，默认 `cl
 | 场景                                                                                 | 动作                                                                                                          |
 | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
 | `wf-coding-relay` 中段发现触及高风险面                                               | 中断当前 stage，升级 `wf-red-team`                                                                            |
-| `wf-incident-rescue` Stage 2 bisect inconclusive                                     | 降级 `no-bisect` 或回 Stage 1 缩 anchor；root cause 仍未明 → 升级 `wf-second-opinion`                         |
+| `wf-incident-rescue` Stage 2 bisect inconclusive                                     | BISECTOR 改用 git log 肉眼定位（commits 已收窄）或回 Stage 1 缩 anchor；root cause 仍未明 → 升级 `wf-second-opinion` |
 | `wf-convoy-refactor` 某批 BATCH ABORT 影响后续                                       | 回 Stage 1 改 batch plan；本批 working tree 丢弃                                                              |
 | `wf-bake-off` Stage 2 发现 Stage 1 漏写维度                                          | 回 Stage 1 改 criteria（version bump）+ 两 prototype 受影响维度重跑——不在 Stage 3 偷加                        |
 | `wf-second-opinion` Stage 3 共识但 confidence 低                                     | 跑 Stage 3 给的 Next Probe；FAIL 重跑带新 input + 已排除假设                                                  |
 | `wf-coauthor-doc` Stage 2 audit 失败需回 Stage 1                                     | 改初稿；不允许在 Stage 3 直接润色绕过                                                                         |
 | `wf-spike` Stage 1 决策门浮现 ≥ 2 候选 + 判据可定                                    | 输出 `EXIT-TO-BAKEOFF` 不进 Stage 2；Stage 3 综合后浮现同类信号则给 SWITCH-DIRECTION 并标下一步 `wf-bake-off` |
 | `wf-spike` Stage 2 全 probe BLOCKED-OVER-BUDGET / ABORT-OVER-LOC                     | 回 Stage 1 缩 probe scope / 缩 Time Budget；问题太宽 → SYNTHESIZER 给 NEED-MORE-PROBES                        |
-| `wf-code-review` 单段发现 🔴 ≥ 3 / 改动文件数 ≥ 8 / 触及凭证或公共 API / 跨 ≥ 3 模块 | 升级 `double-review` 3 段双盲 + reconcile                                                                     |
+| `wf-code-review` 单段发现 🔴 ≥ 3 / 改动文件数 ≥ 8 / 触及凭证或公共 API / 跨 ≥ 3 模块 | 升级 `--mode=double-review` 3 段双盲 + reconcile                                                              |
 
 ## 失败模式
 

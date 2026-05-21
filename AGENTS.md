@@ -44,7 +44,7 @@
 ## 最小流程
 
 1. 看 [docs/workflows.md](docs/workflows.md)「快速选择」表，匹配任务到对应 `wf-*` skill；不匹配（typo / 单行）直接改。
-2. 用 `wf-*` skill：在 Claude Code 或 Codex CLI 内输入 `/wf-<name> [preset] [--mode=<simplification>] <task>` 触发；或按 SKILL.md 内 `## Stages` 节定义的接力顺序手动操作。
+2. 用 `wf-*` skill：在 Claude Code 或 Codex CLI 内输入 `/wf-<name> [preset] [<options>] <task>` 触发；或按 SKILL.md 内 `## Stages` 节定义的接力顺序手动操作。仅 4 个 skill 接受 `--mode`（`wf-bake-off` / `wf-incident-rescue` / `wf-spike` / `wf-code-review`），共 5 个 mode 值（详见 [docs/workflows.md](docs/workflows.md)）；其余 skill 默认即完整流程。
 3. 模板自身变更：改源 → `./tasks.sh sync-skills`（如改 skill）→ `./tasks.sh validate` → commit。
 4. 下游项目变更：按下游自家 AGENTS.md「项目特定规则」节流程走。
 

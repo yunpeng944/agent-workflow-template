@@ -1,12 +1,14 @@
 ---
 name: wf-code-review
 description: External diff review without spec — fresh REVIEWER scores 6 dimensions (correctness/security/readability/tests/architecture/cross-file) and outputs APPROVE/REQUEST-CHANGES/COMMENT-ONLY. Upgrades to 3-stage double-review for high-value PRs.
-argument-hint: '[preset] [--mode=<name>] <task>'
+argument-hint: '[preset] [--mode=double-review] <task>'
 disable-model-invocation: true
 user-invocable: true
 ---
 
 <!-- generated · do not edit · source: skills/wf-code-review.md -->
+
+> **共用约定**：fresh subagent / paste boundary / SCOPE-EXPANSION / DIFF block / dispatch ledger / `./tasks.sh validate` 收口 / 同产品 preset 警告 / tracked follow-up 等 8 项共用约束见 [docs/skill-prompt-conventions.md](../docs/skill-prompt-conventions.md)。
 
 ## Goal
 
@@ -19,7 +21,7 @@ user-invocable: true
 - **特有约束**: **不许猜规格**（意图判定锚点：同 PR 测试 / 命名 / 调用点 / 同模块 grep / commit message / 文档；任一无法唯一证明意图 → 标 🟡 "需向作者澄清"，不擅自评对错）；**不含实现段**（要修走 coding-relay 或派回原作者，本 workflow 只允许写 review action / evidence / follow-up，**禁止补丁级实现方案**）；6 维度逐条 🔴/🟡/🟢 + file:line + review action；总结**必给三态推荐**（APPROVE / REQUEST-CHANGES / COMMENT-ONLY）；**升级 `double-review` 客观条件**（不依赖主观"高价值"判断）：用户显式 `--mode=double-review` / 改动文件数 ≥ 8 / 触及凭证或公共 API 或 CLI / JSON schema / 跨 ≥ 3 模块 / single-mode 输出 🔴 ≥ 3；**同产品 preset 警告**——`double-review` 模式下当 `vendor1 == vendor2`（如 `claude-claude`），双盲只剩 session 隔离。编排者在 Stage 2 dispatch 前打印警告（不阻塞）
 - 通用调度行为（优先级 / fresh subagent / dispatch ledger / single-mode 专用 preset 解析）→ [docs/workflows.md](../docs/workflows.md)
 
-**调用语法**：`/wf-code-review [preset] [--mode=<simplification>] <task>` —— task 是 diff 来源（PR URL / commit range / 路径列表 / staged 改动指针）
+**调用语法**：`/wf-code-review [preset] [--mode=double-review] <task>` —— task 是 diff 来源（PR URL / commit range / 路径列表 / staged 改动指针）。**约定**：`single-mode` 指默认 1 段 REVIEWER；`double-review` 指升级到 3 段双盲 + RECONCILER。
 
 **Stage prompt 来源**：从对应 `===== BEGIN STAGE-N-<ROLE> PROMPT =====` ↔ `===== END … =====` 之间复制。
 
@@ -29,9 +31,9 @@ user-invocable: true
 
 **跳过**：自己刚写的代码 → `wf-coding-relay` Stage 3 已嵌入 review；要红队视角 + 配 negative 测试 → `wf-red-team`；要双盲 bug 诊断 → `wf-second-opinion`；要起草新文档 → `wf-coauthor-doc`。
 
-**降级**：限定单一维度（如只关心安全） → `focus-review --focus=<dim>`；粗看一遍不需结构化 → `quick-comment`。
+**降级**：本 workflow 不提供降级 mode；粗看 / 单维度场景走 AGENTS.md「何时不用 workflow」直接评论。
 
-**升级**：客观条件任一满足 → `double-review`（3 段双盲 + reconcile）：用户显式 `--mode=double-review` / 改动文件数 ≥ 8 / 触及凭证或公共 API 或 CLI / JSON schema / 跨 ≥ 3 模块 / single-mode 输出 🔴 ≥ 3。
+**升级**：客观条件任一满足 → `--mode=double-review`（3 段双盲 + reconcile）：用户显式 `--mode=double-review` / 改动文件数 ≥ 8 / 触及凭证或公共 API 或 CLI / JSON schema / 跨 ≥ 3 模块 / single-mode 输出 🔴 ≥ 3。
 
 ---
 
@@ -48,6 +50,8 @@ user-invocable: true
 - **不含实现段**——你只输出 review 意见；要修走 coding-relay 或派给原作者
 - **review action 边界**：每条 finding 必含 file:line + 具体证据（grep 输出 / 圈复杂度 / 测试缺口 / 调用图）+ review action（写"此处违反 X 约束 / 缺 Y 测试 / 与 Z 文件惯例不一致"）；**禁止补丁级实现方案**（不写"应改为 `const x = ...`"这类代码片段；改成什么是作者 / coding-relay 的事）
 - 6 维度审查，每条 🔴 / 🟡 / 🟢 + file:line + review action（不写"代码应清晰"这类正确的废话）
+
+**阈值优先级**：若仓内含 lint config（`eslint.config.*` / `ruff.toml` / `.golangci.yml` / `.rubocop.yml` / `pyproject.toml [tool.ruff]` / `clippy.toml` 等），**REVIEWER 优先用项目阈值**（如 `max-lines` / `cyclomatic-complexity` / `max-depth`）；缺失才用本 prompt 下列默认阈值（偏 JS/TS 经验值）。判定时在 finding 明示用的是项目配置还是默认。
 
 6 维度审查（每维度判定均需机械锚点，非"合理性"主观断言）：
 
@@ -228,12 +232,16 @@ user-invocable: true
 
 ## Simplification
 
-- **`full-review`**：单段 REVIEWER 6 维度（默认，"完整结构化单段"——与 `double-review` 的多段升级区分；命名沿用现有 `full-*` 习惯）。常规 PR / commit / 历史代码 review
-- **`focus-review --focus=<dim>`**：限定单一维度（`correctness` / `security` / `readability` / `tests` / `architecture` / `cross-file`）。适用：明确只关心一个角度（如"只扫安全"）
-- **`quick-comment`**：单 agent 一遍非结构化 comment，不按 6 维度。适用：粗看一眼给印象，非 gating review
-- **`double-review`**（升级）：3 段双盲 + reconcile。触发条件见 Orchestration / When to use 段（不依赖主观判断）
+默认单段 REVIEWER 6 维度评审（内部称 `single-mode`）。**保留一个升级 mode**：`--mode=double-review`。
 
-降级 3 维度（可数）：**审查深度**（粗看 → quick-comment；标准 → full-review；满足 double-review 客观条件 → double-review）/ **关注范围**（全维度 → full-review；单一维度 → focus-review）/ **是否需要 reconcile**（不需 → 任意 single-mode；需要 → double-review）。
+- **`double-review`**（升级）：3 段双盲 + RECONCILER 合并。**触发判据**（4 项任一，机械可数）：改动文件数 ≥ 8 / 触及凭证或公共 API / 跨 ≥ 3 模块 / single-mode 输出 🔴 ≥ 3。**禁止主观"高价值 PR"判断**——触发条件必须可 grep 验证。
+
+**何时不该走本 workflow**：
+- 粗看一眼给印象（非 gating） → 直接评论，不走 workflow
+- 限定单一维度（如只看安全） → 直接评论 + prompt 内自然语言指定关注维度
+- self-PR / 自己刚写的代码 → 走 `wf-coding-relay` Stage 3（已嵌入 review + 配 fix stage）
+
+无其他降级路径——非 double-review 场景走默认 single-mode。
 
 ## 已知 follow-up
 

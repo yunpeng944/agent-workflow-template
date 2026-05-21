@@ -1,10 +1,12 @@
 ---
 name: wf-coding-relay
 description: 4-stage default development workflow — PLANNER plans, IMPLEMENTER implements, REVIEWER reviews diff independently, IMPLEMENTER applies fix.
-argument-hint: '[preset] [--mode=<name>] <task>'
+argument-hint: '[preset] <task>'
 disable-model-invocation: true
 user-invocable: true
 ---
+
+> **共用约定**：fresh subagent / paste boundary / SCOPE-EXPANSION / DIFF block / dispatch ledger / `./tasks.sh validate` 收口 / 同产品 preset 警告 / tracked follow-up 等 8 项共用约束见 [docs/skill-prompt-conventions.md](../docs/skill-prompt-conventions.md)。
 
 ## Goal
 
@@ -27,7 +29,7 @@ user-invocable: true
 
 **跳过**：高风险面 → `wf-red-team`；大重构 → `wf-convoy-refactor`；疑难 bug → `wf-second-opinion`；失败测试 → `wf-incident-rescue`；选型 → `wf-bake-off`；治理文档 → `wf-coauthor-doc`。
 
-**降级**：单文件 ≤ 200 行 + 已熟模块 → `plan-and-implement`；typo / 文案 → `single-agent`。
+**降级**：本 workflow 不提供 mode；详见 Simplification 段。
 
 ---
 
@@ -76,7 +78,9 @@ user-invocable: true
 1. 读方案中提到的所有现有文件，确认目录 + API 与方案一致
 2. 列出将要修改 / 新建的文件清单
 3. 标 **DEVIATION**（与方案不符 + 修正建议）或 **BLOCKED**（无法直接执行 + 回 Stage 1 的具体问题）
-4. 输出 Phase A 结果块，**停等用户**：`Phase B GO` 继续 / `back to Stage 1` 重启
+4. 输出 Phase A 结果块。**停等闸门**：
+   - 若结论 = `PASS` + 修改文件 ≤ 3 + 无新建文件 → 标 `PHASE-A AUTO-CONTINUE` 直接进 Phase B（无需用户裁定）
+   - 若 `DEVIATION` 或 `BLOCKED` → **必停**等用户：`Phase B GO` 继续 / `back to Stage 1` 重启
 
 **Phase B — 实现（用户 GO 后）**：
 1. 最小必要改动；不扩范围
@@ -124,7 +128,7 @@ SCOPE-EXPANSION (如有): 文件 + why + 是否已停等
 
 ````
 ===== BEGIN STAGE-3-REVIEWER PROMPT =====
-不要重新实现。**独立性约束**：本 prompt 含 plan 与 diff；IMPLEMENTER summary 不在 context——先基于 diff 形成独立 review，避免被自评偏置。形成 review 后若用户补给 summary 可作补充信号，不应改变主结论。
+不要重新实现。**独立性约束**：本 prompt 含 plan 与 diff；IMPLEMENTER summary **永不进入** context——独立 review 不可逆，禁止"事后补给 summary 调整 review"（这会软化结论）。补充澄清走 Stage 4 IMPLEMENTER 主动 raise，不走 review 修订路径。
 
 review 维度：
 1. 是否偏离 Stage 1 方案？哪里、为什么、是否合理？
@@ -198,8 +202,11 @@ review 维度：
 
 ## Simplification
 
-- **`full-relay`**：4 阶段（默认）。契约变更 / 多文件 / 新功能 / 不熟模块
-- **`plan-and-implement`**：跑 Stage 1 + Stage 2，跳 Stage 3/4，用户自审。适用：单文件 ≤ 200 行、已熟模块、不动公共 API
-- **`single-agent`**：单 role 单 session 全包；具体 model 由 preset 决定（如 `codex-codex` + `single-agent` = 全 Codex 单 session）。适用：纯重排 / typo / 已写过 3+ 次的模式
+本 workflow 不提供显式降级 mode flag；默认即完整 4 阶段。
 
-降级 3 维度：**未知度**（需先想清楚 → 留 Stage 1）/ **可逆度**（高可逆可跳 Stage 3/4）/ **跨面广度**（触及契约 / 多模块必须 full-relay）。
+**何时不该走本 workflow**（走 [AGENTS.md](../AGENTS.md)「何时不用 workflow」直接编辑）：
+- 单 typo / 单行文案改动
+- 已熟模块小改动、不动公共 API
+- 已写过 3+ 次的同类模式
+
+降级路径不存在；要么走完整 4 阶段，要么走 AGENTS.md「何时不用 workflow」，不存在中间档。

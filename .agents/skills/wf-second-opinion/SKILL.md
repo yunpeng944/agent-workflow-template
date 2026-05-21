@@ -1,12 +1,14 @@
 ---
 name: wf-second-opinion
 description: Parallel dual-blind diagnostic workflow — DIAGNOSER-A & DIAGNOSER-B independently diagnose the same incident, then RECONCILER extracts consensus / divergence / blind spots before any fix.
-argument-hint: '[preset] [--mode=<name>] <task>'
+argument-hint: '[preset] <task>'
 disable-model-invocation: true
 user-invocable: true
 ---
 
 <!-- generated · do not edit · source: skills/wf-second-opinion.md -->
+
+> **共用约定**：fresh subagent / paste boundary / SCOPE-EXPANSION / DIFF block / dispatch ledger / `./tasks.sh validate` 收口 / 同产品 preset 警告 / tracked follow-up 等 8 项共用约束见 [docs/skill-prompt-conventions.md](../docs/skill-prompt-conventions.md)。
 
 ## Goal
 
@@ -23,13 +25,15 @@ user-invocable: true
 
 **双盲硬约束**：Stage 1/2 必须**两个独立 dispatch**（绝不复用任一 session）；Stage 3 必须是**第三个独立 dispatch**（从未参与 Stage 1/2）。
 
+**编排者侧双盲纪律**：把 INCIDENT INPUT 写到 fixture 文件 `/tmp/secopinion-fixture-<run-id>.txt`，两次 dispatch 用**相同 prompt 字符串**（含同 fixture 路径 / 同 SHA）；dispatch ledger 记录 `fixture_sha_a` + `fixture_sha_b` 必须相等；**禁止**在两次 dispatch 之间向用户汇报中间结果（防 A 输出污染 B prompt）；两次 dispatch 完成后再合并报告。
+
 ## When to use / Skip if
 
 **用**：单 agent 多轮 debug 在原地打转；跨子系统问题（前端崩 / 状态污染 / Node-UI 边界异常）；复现稳定但 root cause 不明（"知道哪里崩、不知道为什么"）；临 release 高风险 bug。
 
 **跳过**：已知 root cause 只想修 → `wf-incident-rescue known-cause-fix`；failing test / regression 需先复现 + 二分 → `wf-incident-rescue`；高风险面新功能（非 debug）→ `wf-red-team`；普通新功能 → `wf-coding-relay`。
 
-**降级**：已有一份诊断只想反驳 → `single-counterpoint`；只要 high-level sanity check → `quick-poll`。
+**降级**：本 workflow 不提供 mode；详见 Simplification 段。
 
 ---
 
@@ -164,10 +168,13 @@ high / med / low + 一句话理由。
 - [双方都没看的方向: ...]
 （必填——若双方 Blind Spots 段确无显式交集，写"无显式重叠——但提示各自盲区为 [A: ... | B: ...]"，**不允许填 NONE / 空 / 编造**）
 
-## Next Probe (single command)
-能同时区分双方假设或验证共识的**一条**命令：[command]
+## Next Probe (1 主 + 可选 ≤ 2 contingent)
+能同时区分双方假设或验证共识的**一条主命令**：[command]
 - 期望 PASS 含义: ...
 - 期望 FAIL 含义: ...
+（可选）Contingent probe 1（仅主 probe 输出 INCONCLUSIVE 时跑）：[command]
+（可选）Contingent probe 2（同上）：[command]
+约束：主 probe **必须**能单独区分假设；contingent 仅用于主 probe 不可判时的备援，不允许是与主 probe 等价但更慢的替代
 
 ## Action Tree
 - 若 probe PASS → 进 [wf-incident-rescue 或 wf-coding-relay] 修复
@@ -198,19 +205,11 @@ high / med / low + 一句话理由。
 
 ## Simplification
 
-- **`full-dual-blind`**：3 阶段（默认）。疑难 bug、跨子系统、临 release 高风险
-- **`single-counterpoint`**：已有一份诊断，跳 Stage 1，只跑 Stage 2 但 prompt 改为"反驳模式"（见下），再进 Stage 3
-- **`quick-poll`**：双方各给 **1 句话** Primary Hypothesis + 1 条 Verification Command（不展开证据链 / 盲区），1-2 分钟快速 sanity check
+本 workflow 不提供显式降级 mode flag；默认即完整 3 阶段。
 
-降级 3 维度：**复杂度**（跨子系统 / 状态污染 → full-dual-blind）/ **既有诊断**（已存在 → single-counterpoint）/ **时间预算**（< 5 分钟 → quick-poll）。
+**何时不该走本 workflow**：
+- 1-2 分钟 sanity check → 直接问，不走 workflow
+- 已知 root cause + 已知 fix 方案 → 走 `wf-incident-rescue --mode=known-cause-fix` 或 `wf-coding-relay`
+- 已有一份诊断只想反驳 → 走 `wf-code-review`（把诊断当作"代码"评审）或直接派 fresh subagent 反驳
 
-### `single-counterpoint` 反驳 prompt 简化版
-
-替换 Stage 2 prompt 的"独立诊断"段为：
-
-```
-你是反驳者。下面是一份既有诊断。**不要 endorse**——找它错在哪 / 漏在哪。按 STAGE-2 DIAGNOSIS 格式输出：
-- 若独立分析得出**实质相同**的 Primary Hypothesis（不只是措辞重合），保留之，且 Evidence Chain 给**既有诊断未引的新证据**；Alternative Hypotheses ≥ 1 个**仍未排除**的可能性
-- 若**实质不同**，给不同的 Primary Hypothesis；既有诊断的核心假设作为 Alternative 列出 + 反对证据
-任一情况下：Evidence Chain 必须**至少一跳引用既有诊断未引的证据**；Blind Spots 必须包含"既有诊断的盲区"。
-```
+降级路径不存在；要么走完整 3 阶段，要么走其他 workflow，不存在中间档。

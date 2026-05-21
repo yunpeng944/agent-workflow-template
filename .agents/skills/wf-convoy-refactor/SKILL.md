@@ -1,12 +1,14 @@
 ---
 name: wf-convoy-refactor
 description: Convoy refactor — split cross-module refactor into verifiable batches; PLANNER (batch plan) + per-batch IMPLEMENTER/REVIEWER/IMPLEMENTER mini-cycle with explicit invariants.
-argument-hint: '[preset] [--mode=<name>] <task>'
+argument-hint: '[preset] <task>'
 disable-model-invocation: true
 user-invocable: true
 ---
 
 <!-- generated · do not edit · source: skills/wf-convoy-refactor.md -->
+
+> **共用约定**：fresh subagent / paste boundary / SCOPE-EXPANSION / DIFF block / dispatch ledger / `./tasks.sh validate` 收口 / 同产品 preset 警告 / tracked follow-up 等 8 项共用约束见 [docs/skill-prompt-conventions.md](../docs/skill-prompt-conventions.md)。
 
 ## Goal
 
@@ -29,7 +31,7 @@ user-invocable: true
 
 **跳过**：单文件 / 单模块 → `wf-coding-relay`；高风险面（auth / state / 契约）即便范围小 → `wf-red-team`；regression 现场 → `wf-incident-rescue`；选型 / 架构对比 → `wf-bake-off`。
 
-**降级**：2 批以内 + 改动同质 → `dual-batch`；机械 rename / codemod → `codemod-pass`。
+**降级**：本 workflow 不提供 mode；详见 Simplification 段。
 
 ---
 
@@ -218,6 +220,8 @@ review 维度（按 convoy 特性扩展）：
 4. **修复不得越批**：若 review 提到的问题需在后续批次解决，标 `DEFERRED-TO-BATCH-[id]` 进 follow-up
 5. 跑本批 `acceptance` + `./tasks.sh validate`
 6. 所有 INVARIANTS 再次确认 PASS
+7. **Cross-Batch INVARIANTS Recheck**：本批 commit **后**，重跑所有命令型 INVARIANTS 并对照上一批 commit 时记录的退出码——任何 PASS → FAIL 即 `BATCH REWORK`（前批引入的不变量被本批破坏 或 反之）。在 SUMMARY 中列每条 INVARIANT 的"本批前 / 本批后"退出码对比；首批跳过对比但仍记录退出码作下一批基线
+8. **INVARIANTS-REPORT 格式硬约束**：每条命令型 INVARIANT 必带**命令字串 + 退出码**两字段，禁止只写 PASS/FAIL（编排者据此可复跑校验）
 
 例外：修 🔴 时发现必要 adjacent 修改（同批内）→ 标 **SCOPE-EXPANSION**，停等裁定。
 
@@ -254,8 +258,10 @@ DEFERRED-TO-BATCH-X: [item ↔ batch id]
 
 ## Simplification
 
-- **`full-convoy`**：4 阶段 × N 批次（默认）。≥ 3 模块 / ≥ 5 文件 / 改动公共抽象
-- **`dual-batch`**：Stage 1 出 2 批计划，剩余 stage 套 `wf-coding-relay`（不强制每批独立 mini-cycle）。适用：可清晰切两批且同质
-- **`codemod-pass`**：Stage 1 写 codemod 脚本规范 + 单批跑 + Stage 3 review codemod 产出 diff。适用：大规模机械改写（rename / import path / API 替换）
+本 workflow 不提供显式降级 mode flag；默认即完整 4 阶段 × N 批次。
 
-降级 3 维度：**批次切分清晰度**（不能找独立可验证切点 → `wf-coding-relay`）/ **单批估算**（≤ 600 行 / 15 文件，超则继续切）/ **重构机械度**（大部分可 codemod → `codemod-pass`）。
+**何时不该走本 workflow**：
+- < 3 模块 / < 5 文件 / 不改公共抽象 → 走 `wf-coding-relay`
+- 单 typo / 单文件 → 直接改
+
+降级路径不存在；要么走完整 convoy，要么走其他 workflow，不存在中间档。
