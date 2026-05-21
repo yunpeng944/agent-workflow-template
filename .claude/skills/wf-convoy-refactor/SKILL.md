@@ -14,12 +14,10 @@ user-invocable: true
 
 ## Orchestration
 
-- **preset**: `<vendor1>-<vendor2>` 按 [docs/workflows.md](../docs/workflows.md) 「Role / Model 映射 / Vendor 字典」节查；默认 `claude-codex`；`custom` (`--planner=<m> --implementer=<m> --reviewer=<m>` 缺任一 fail-fast)
-- **调度优先级**：CLI (`claude -p` / `codex exec`) → host subagent (Claude Code `general-purpose` / `codex:codex-rescue`) → fail-fast
-- **role slots**: PLANNER (Stage 1 一次性产 batch plan) / IMPLEMENTER (每批 Stage 2, 4) / REVIEWER (每批 Stage 3)
-- **evaluator stage**: 每批 Stage 3 (REVIEWER) dispatch fresh subagent；input 仅含 STAGE-1 PLAN + 本批 STAGE-2 DIFF + STAGE-2 INVARIANTS-REPORT，**绝不**含 STAGE-2 SUMMARY 的 self-narrative
+- **preset**: 见 [docs/workflows.md](../docs/workflows.md) 「Role / Model 映射 / Vendor 字典」节；默认 `claude-codex`；`custom` (`--planner=<m> --implementer=<m> --reviewer=<m>` 缺任一 fail-fast)
+- **role slots**: PLANNER (Stage 1 一次性产 batch plan) / IMPLEMENTER (每批 Stage 2, 4) / REVIEWER (每批 Stage 3)；每批 Stage 3 input 仅含 STAGE-1 PLAN + 本批 STAGE-2 DIFF + STAGE-2 INVARIANTS-REPORT，**绝不**含 STAGE-2 SUMMARY 的 self-narrative
 - **特有约束**: 每批 Stage 4 收口后才 commit（Stage 2/3 期间留 working tree）；**INVARIANTS 必须机械可校验**（diff 型 reviewer 自判 + 命令型信 Stage 2 退出码）；BATCH ABORT/REWORK 时**丢 working tree** 不 git revert（commit 未发生）；跨批 follow-up 用 `DEFERRED-TO-BATCH-X` 标记；**Worktree 隔离每批一个** `git worktree add`，避免跨批污染
-- 详细 model 映射 / host-specific routing / 调度执行约束 / dispatch ledger / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
+- 通用调度行为（优先级 / fresh subagent / dispatch ledger / single-role preset 例外）→ [docs/workflows.md](../docs/workflows.md)
 
 **调用语法**：`/wf-convoy-refactor [preset] [--mode=<simplification>] <task>`
 
