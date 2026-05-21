@@ -41,7 +41,7 @@ cd my-project
 
 在 [AGENTS.md](AGENTS.md) 「项目特定规则」节追加：契约真源 / 高风险文件 / CLI 命令面 / 自家 lint+typecheck 命令 / 凭证策略 / CI 入口。**不要动**模板自身的其他节（标题集合由 [agents-md.config.json](agents-md.config.json) `expectedHeadings` 锁定）。
 
-**填料速成**：[governance-snippets/](governance-snippets/) 内 15 段治理片段（元规则 / 能力假设 / 三层边界 / 模型路由 / 真源 / 协作 / 命令锚点 / 删除候选 等），全用 `{{项目名}}` / `{{validate命令}}` / `{{state目录}}` 等占位符，挑相关的 paste 到 AGENTS.md「项目特定规则」节或自家 `docs/*.md`，sed 一遍替换占位符即可。
+**填料速成**：[governance-snippets/](governance-snippets/) 内 13 段治理片段（元规则 / 能力假设 / 三层边界 / 模型路由 / 真源 / 协作 / 命令锚点 / 删除候选 等），全用 `{{项目名}}` / `{{validate命令}}` / `{{state目录}}` 等占位符，挑相关的 paste 到 AGENTS.md「项目特定规则」节或自家 `docs/*.md`，sed 一遍替换占位符即可。
 
 ### 5. external paste 模板（人 → AI 交接）
 
