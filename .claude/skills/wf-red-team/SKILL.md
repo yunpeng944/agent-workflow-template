@@ -14,12 +14,10 @@ user-invocable: true
 
 ## Orchestration
 
-- **preset**: `<vendor1>-<vendor2>` 按 [docs/workflows.md](../docs/workflows.md) 「Role / Model 映射 / Vendor 字典」节查；默认 `claude-codex`；`custom` (`--planner=<m> --implementer=<m> --red-teamer=<m>` 缺任一 fail-fast)
-- **调度优先级**：CLI (`claude -p` / `codex exec`) → host subagent (Claude Code `general-purpose` / `codex:codex-rescue`) → fail-fast
-- **role slots**: PLANNER / IMPLEMENTER / RED-TEAMER
-- **evaluator stage**: Stage 3 (RED-TEAMER) 永远 fresh subagent；input 仅含 STAGE-1 PLAN + STAGE-2 DIFF，**不含** STAGE-2 SUMMARY
+- **preset**: 见 [docs/workflows.md](../docs/workflows.md) 「Role / Model 映射 / Vendor 字典」节；默认 `claude-codex`；`custom` (`--planner=<m> --implementer=<m> --red-teamer=<m>` 缺任一 fail-fast)
+- **role slots**: PLANNER / IMPLEMENTER / RED-TEAMER；Stage 3 (RED-TEAMER) input 仅含 STAGE-1 PLAN + STAGE-2 DIFF，**不含** STAGE-2 SUMMARY
 - **特有约束**: Stage 3 红队视角（不奖励防御充分性、只输出"我能怎么让它出事"）；Stage 4 每 🔴 **1:1 配 negative 测试**（红 → 复现攻击；绿 → 攻击被挡）
-- 详细 model 映射 / host-specific routing / worktree 隔离 / 调度执行约束 / dispatch ledger / 同产品 preset 警告触发时机 → [docs/workflows.md](../docs/workflows.md)
+- 通用调度行为（优先级 / fresh subagent / dispatch ledger / worktree 隔离 / single-role preset 例外）→ [docs/workflows.md](../docs/workflows.md)
 
 **调用语法**：`/wf-red-team [preset] [--mode=<simplification>] <task>`
 
