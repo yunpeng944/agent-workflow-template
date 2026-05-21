@@ -16,8 +16,6 @@ Apply when reviewing code **you didn't write**, **without a PLAN to compare agai
 
 **任一无法唯一证明意图 → 标 🟡 "需向作者澄清"** —— 不擅自评对错。
 
-历史代码审计豁免（commit > 90 天且原作者不可联系）：意图锚点缺失不自动标 🟡，改为 standalone 评判（仅看代码自身语义自洽），输出 Summary 时声明"历史审计模式"。
-
 ## 6 Dimensions（每条机械锚点，不主观）
 
 ### 1. 正确性 (Correctness)

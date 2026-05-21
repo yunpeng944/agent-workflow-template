@@ -47,10 +47,3 @@ Apply when: candidates < 2 / criteria 不清 / 不熟领域 / 概念验证 / 选
 - **NEED-MORE-PROBES**: 信息不足，列 ≤ 3 个新 probe 设计
 
 不允许"继续做吧"这种无 decision；不允许只输 CONTINUE 不论 NO-GO 可能。
-
-## Paper-Mode (skip code, use docs)
-
-适用：问题答案在权威文档 / 源码注释 / RFC / 公开 benchmark。
-- 仍跑 Measurement（grep / man / rg / curl），记录原始命令输出
-- Raw Observations 引证文档原文 / 源码 file:line / URL
-- 公开 benchmark 必带：版本 + 硬件 + 输入规模 + 日期；缺一项标 INCOMPLETE
