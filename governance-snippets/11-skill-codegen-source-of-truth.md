@@ -18,16 +18,17 @@ adapters/node/sync_skills.mjs    ← 生成器（写模式 / --check 模式）
 .prettierignore                  ← 排除两镜像目录
 ```
 
-frontmatter 约定：`name`（kebab-case，与文件名 stem 一致）+ `description`（≤ 200 字符，可含 1-2 个跨语言别名以扩大隐式触发匹配面）。正文五段：`## Role` / `## Goal` / `## Boundaries` / `## Validation` / `## Output`（保留 Anthropic SKILL.md 官方示例的英文 heading）。
+frontmatter 约定：`name`（kebab-case，与文件名 stem 一致）+ `description`（≤ 500 字符，可含 1-2 个跨语言别名以扩大隐式触发匹配面）。正文结构：`## Goal` / `## Orchestration` / `## When to use / Skip if` / `## Stages` / `## Simplification`。
 
 生成器输出格式（两镜像字节级一致）：
 
 ```
-<!-- generated · do not edit · source: skills/<name>.md -->
 ---
 name: <name>
 description: <description>
 ---
+
+<!-- generated · do not edit · source: skills/<name>.md -->
 
 <body 原样拷贝>
 ```
