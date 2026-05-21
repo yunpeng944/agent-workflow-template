@@ -1,6 +1,6 @@
 # 15 · 剪枝信号 + 触发式审计（操作化）
 
-**何时用**：替代 [10-deletion-candidates](10-deletion-candidates.md) 的抽象版；需要可被 grep / lint / 前沿 thinking model 机械判定的剪枝判定 + 事件驱动的批量审计流程。放在 `docs/agents-governance.md`。
+**何时用**：需要可被 grep / lint / 前沿 thinking model 机械判定的剪枝判定 + 事件驱动的批量审计流程。放在 `docs/agents-governance.md`。相对于抽象的剪枝讨论，本片段强调操作化的触发条件与批量处理流程。
 **占位符**：阈值数字（≥ 5 条候选 / > 50 个 commit）按团队节奏微调。
 **反模式**：模糊地"定期清理"（无触发条件 → agent 不知何时该提议剪枝）；只删不审计（节奏断裂 → 半年后又膨胀）；用主观判定（"这条好像没人用了"——无 grep-able 标记）；日历驱动季度审计（agent 项目节奏远快于人类季度，等不到下次首月膨胀已发生）。
 

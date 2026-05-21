@@ -1,10 +1,12 @@
 # AGENTS.md 治理片段库
 
+> **定位**：本目录是 paste 素材库，下游 fork 后按需挑一两段；模板自身不强制采用任一。
+
 > **目录用途**：本目录**仅放治理 snippet（按编号 NN-\*.md 命名）**。
 > 不放计划文档、决策报告、临时笔记 —— 调研报告见 `docs/research-reports/`，完工 plan / proposal 归档见 `docs/archive/`。
 > Snippet 是设计期快照，**不与本仓 AGENTS.md 实时同步**；模板抽取（`agent-playbook-template`）时此目录是 source material。
 
-> 15 段项目无关、可直接 copy-paste 到任意项目 `AGENTS.md` / `CLAUDE.md` / `docs/*.md` 的治理片段。
+> 13 段项目无关、可直接 copy-paste 到任意项目 `AGENTS.md` / `CLAUDE.md` / `docs/*.md` 的治理片段。
 > 每个文件分三层：**何时用**（标题下） · **可直接复制的内容**（`---` 之间） · **来源 / 改写建议**（底部）。
 
 ## 使用方式
@@ -46,18 +48,16 @@ awk '/^─{3,}$/{f=!f;next} f' 03-rule-quality-criteria.md
 | 01   | [01-meta-rule.md](01-meta-rule.md)                                         | AGENTS.md 顶部 blockquote                              | 约束本文件本身不膨胀                                                                  |
 | 02   | [02-capability-assumption.md](02-capability-assumption.md)                 | AGENTS.md "项目目标" 末                                | 声明面向 Opus 4.x / GPT-5.x，免去入门教程                                             |
 | 03   | [03-rule-quality-criteria.md](03-rule-quality-criteria.md)                 | docs/agents-governance.md                              | "可执行/可判定/可快速定位" 三判据                                                     |
-| 04   | [04-dont-do-pairing.md](04-dont-do-pairing.md)                             | 任意硬约束章节                                         | 每个 ❌ 配 ✅ 替代（两层简化版；进阶见 13）                                           |
 | 05   | [05-layered-validation.md](05-layered-validation.md)                       | docs/development.md                                    | 开发内循环 vs 收口闸门分层                                                            |
 | 06   | [06-governance-signals.md](06-governance-signals.md)                       | docs/agents-governance.md                              | 何时修补 / 何时 Bootstrap 的宏观信号（操作化见 15）                                   |
 | 07   | [07-source-of-truth.md](07-source-of-truth.md)                             | AGENTS.md 导航段                                       | 真源指针 + 自动校验回路                                                               |
 | 08   | [08-agent-collaboration.md](08-agent-collaboration.md)                     | AGENTS.md 一级章节                                     | subagent 委派 + lazy 导航 + 优先级 + 信任边界                                         |
 | 09   | [09-verification-anchors.md](09-verification-anchors.md)                   | AGENTS.md 验证段                                       | prose 不替代命令；命令锚点表                                                          |
-| 10   | [10-deletion-candidates.md](10-deletion-candidates.md)                     | docs/agents-governance.md                              | 删除候选信号抽象版（操作化版见 15）                                                   |
 | 11   | [11-skill-codegen-source-of-truth.md](11-skill-codegen-source-of-truth.md) | skills/ + scripts/ + .claude/skills/ + .agents/skills/ | skill 真源 + sync codegen + Claude/Codex 双工具镜像 + CI 防漂移                       |
 | 12   | [12-nested-sub-agents-md.md](12-nested-sub-agents-md.md)                   | src/<高风险目录>/AGENTS.md                             | agents.md closest-file-wins 嵌套子规约（≤ 30 行，根文件改指针）                       |
-| 13   | [13-three-tier-boundaries.md](13-three-tier-boundaries.md)                 | AGENTS.md "任务分流" 前                                | 三层边界：始终 / 先问后做 / 禁止（取代 04 的两层版）                                  |
+| 13   | [13-three-tier-boundaries.md](13-three-tier-boundaries.md)                 | AGENTS.md "任务分流" 前                                | 三层边界：始终 / 先问后做 / 禁止（简单配对的进阶）                                    |
 | 14   | [14-model-role-routing.md](14-model-role-routing.md)                       | AGENTS.md "最小流程" 后                                | 模型角色路由：plan/review → Opus；implement/debug → Sonnet/Codex；subagent 写入白名单 |
-| 15   | [15-prune-signal-quarterly-audit.md](15-prune-signal-quarterly-audit.md)   | docs/agents-governance.md                              | 剪枝信号操作化（grep prune-candidate + 季度审计；取代 10 的抽象版）                   |
+| 15   | [15-prune-signal-quarterly-audit.md](15-prune-signal-quarterly-audit.md)   | docs/agents-governance.md                              | 剪枝信号操作化（grep prune-candidate + 事件触发审计）                                 |
 
 ## 哲学
 
