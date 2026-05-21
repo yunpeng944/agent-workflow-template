@@ -1,6 +1,6 @@
 # Agent 自治 Bootstrap 规范
 
-> **真源**：本仓 `docs/bootstrap-spec.md`。另有 working copy 在 Obsidian (`AgentSpace/40-agent-autonomy-bootstrap-spec.md`) 与 Notion (`34199080acdf81dd8d4cf30c3bda7e1a`)，改动以本仓为准；working copy 仅供作者编辑使用，回流前需 cp 同步到本仓。
+> **真源**：本仓 `docs/bootstrap-spec.md`（git 是 single source of truth）。spec 演进流程见根目录 `CONTRIBUTING.md`——agent 可直接提 PR / 作者 review merge，无需经 Notion 或 Obsidian 中转。
 >
 > **与项目 `docs/agents-governance.md` 的分层关系**：本 spec 是高层 SOP，可能列比项目 governance 入口段更全的场景（例如 §1.6 第 5 条「新团队成员首次接触」在项目 governance.md 故意精简掉，只保留 4 条高频 ops-level 触发条件）。不算漂移，按"spec 覆盖完整场景 / governance 精简入口"分层；spec 跟项目 governance **直接矛盾**才视为漂移。
 >
@@ -340,10 +340,3 @@ code_commits=$(git log --since="$(git log -1 --format=%ci AGENTS.md)" --oneline 
 - Builder.io — "Improve Your AI Code Output with AGENTS.md" (2026)
 - OpenAI — "Custom Instructions with AGENTS.md" (Codex Docs)
 - AGENTS.md — Official Specification (Linux Foundation)
-
----
-
-## 修订记录
-
-- **2026-04-29**：初版从 Notion 同步。
-- **2026-05-14**：合并原 v2 主规范（Layer 1/2/3 + 参考来源）进本文件，单文件自包含；新增 §1.7 2026 实践补丁、§2.3 删除候选信号；场景二改名"重审 Bootstrap"。原 v2 page 已不再被本文档引用，可在 Notion UI 手动 archive。
