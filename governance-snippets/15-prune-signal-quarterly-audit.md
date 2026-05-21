@@ -49,7 +49,7 @@
 - Anthropic Claude Code best-practices："If Claude keeps doing X despite the rule, the rule is getting lost in noise — prune."
 - Augment Code 2026 实测：超 150 行的 AGENTS.md 推理成本 +20%；治理无剪枝信号则只增不减
 - Mercari 2025-10 "Self-enforcing self-updating docs"
-- wf-spike learning-only 实证（CommandTest 2026-05）：前沿 thinking model（Opus 4.7 / GPT-5.5）在 84 条治理规则上 100% evidence cite + 4/4 mapped 到判据，证明 "PR 触发数据 / session 违反记录" 等不存在数据源的判据可改写为 "模型审计 + git log 兜底"。
+- 模型实证（CommandTest 2026-05）：前沿 thinking model（Opus 4.7 / GPT-5.5）在 84 条治理规则上 100% evidence cite + 4/4 mapped 到判据，证明 "PR 触发数据 / session 违反记录" 等不存在数据源的判据可改写为 "模型审计 + git log 兜底"。
 
 ## 改写建议
 

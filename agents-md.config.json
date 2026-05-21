@@ -24,6 +24,7 @@
   },
   "knownPrefixes": [
     "skills/",
+    "rules/",
     "adapters/",
     "docs/",
     "prompts/",

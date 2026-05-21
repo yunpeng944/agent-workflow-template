@@ -4,7 +4,7 @@ Node 实现 `agents-md.config.json` 三个治理入口：
 
 - `check_structure.mjs` — AGENTS.md 二级标题集合与顺序 + 各节行数上限校验
 - `check_refs.mjs` — AGENTS.md / README.md / docs/**.md 内 markdown link 路径存在性校验
-- `sync_skills.mjs` — `skills/wf-*.md` 真源 → `.claude/skills/` + `.agents/skills/` 双镜像同步
+- `sync_skills.mjs` — `skills/<name>.md` 真源 → `.claude/skills/` + `.agents/skills/` 双镜像同步
 
 ## 运行环境
 
@@ -48,4 +48,4 @@ description: <≤500 chars>
 <skill body>
 ```
 
-首行必须是 `---`（Anthropic SKILL.md spec 硬约束）。`name` 字段必须 kebab-case 且等于源文件 stem（如 `skills/wf-coding-relay.md` → `name: wf-coding-relay`）。
+首行必须是 `---`（Anthropic SKILL.md spec 硬约束）。`name` 字段必须 kebab-case 且等于源文件 stem（如 `skills/wf-relay.md` → `name: wf-relay`）。

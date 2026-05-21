@@ -2,29 +2,43 @@
 
 ## 用途
 
-`skills/` 是 Claude Code 与 OpenAI Codex 使用的会话内工作流 skill 单一真源。
+`skills/` 是 Claude Code 与 OpenAI Codex 使用的 user-invocable workflow skill 真源。当前 2 个：
 
-运行时镜像位置是 `.claude/skills/` 与 `.agents/skills/`。
+- **`wf-relay`** — 接力模式：当前 LLM 编排 + dispatch executor 执行 + 当前 LLM 核对汇报
+- **`wf-parallel`** — 平行模式：两个 executor 独立做同一任务 + 当前 LLM 综合两份产物
 
-每个源文件都是紧凑的工作流契约，包含 YAML frontmatter 与核心章节：
-Goal, Orchestration, When to use / Skip if, Stages, and Simplification。
+运行时镜像位置是 `.claude/skills/`（Claude Code 消费）与 `.agents/skills/`（Codex CLI 消费）。
 
-镜像由脚本生成，确保两个工具加载同一份工作流文本。
+## 调用
+
+```
+/wf-relay [executor] <prompt>
+/wf-parallel [v1-v2] <prompt>
+```
+
+可选叠加规则文件（host 原生处理，skill 不需特殊解析）：
+
+```
+/wf-relay codex @rules/security.md <task>
+/wf-parallel claude-codex @rules/base.md @rules/review.md <task>
+```
+
+不传 `@<file>` 则用 host 默认规则。
 
 ## 编辑
 
-只编辑 `skills/<name>.md`。
+只编辑 `skills/<name>.md`，不要编辑 `.claude/skills/` 或 `.agents/skills/` 下的 generated 文件。
 
-不要编辑 `.claude/skills/` 或 `.agents/skills/` 下的 generated 文件。
+编辑后跑 `./tasks.sh sync-skills`，同一次 commit 提交源文件与镜像。
 
-编辑任一 skill 源文件后，运行 `./tasks.sh sync-skills`。
+只检查漂移：`./tasks.sh sync-skills-check`。
 
-同一次 commit 中提交源文件与两份 generated 镜像。
+## 添加新 skill
 
-只需检查漂移时，运行 `./tasks.sh sync-skills-check`。
+按 [skills/wf-relay.md](wf-relay.md) 或 [skills/wf-parallel.md](wf-parallel.md) 的格式起新文件。frontmatter 必含 `name` + `description`（"Use when..." 格式）+ `argument-hint`。
 
-## 与 `prompts/` 的区别
+## 与 `prompts/` 和 `rules/` 的区别
 
-现有 `prompts/` 目录保存用于人到 AI 交接的外部粘贴模板。
-
-`skills/` 保存会话内、可自动发现的工作流，由工具按需加载。
+- `skills/` — 会话内 user-invocable workflow，host 加载到 LLM context
+- `rules/` — 可选的任务约束，通过 `@<file>` 叠加到 skill 调用
+- `prompts/` — 外部 paste 模板（人 → AI 交接，无 host 时用）
