@@ -133,7 +133,7 @@ checklist 只列类别，**不复制契约值**。详细字段以契约真源为
 
 ## Bootstrap Spec
 
-> **真源**：本仓 `docs/agents-governance.md`（git 是 single source of truth）。spec 演进流程见根目录 `CONTRIBUTING.md`——agent 可直接提 PR / 作者 review merge，无需经 Notion 或 Obsidian 中转。
+> **真源**：本仓 `docs/agents-governance.md`（git 是 single source of truth）。spec 演进流程见根目录 `CONTRIBUTING.md`——agent 可直接提 PR / 作者 review merge。
 >
 > **与项目 `docs/agents-governance.md` 上游各节的分层关系**：本节是高层 SOP，可能列比上游入口段更全的场景（例如 §1.6 第 5 条「新团队成员首次接触」在上游故意精简掉，只保留 4 条高频 ops-level 触发条件）。不算漂移，按"spec 覆盖完整场景 / 入口段精简入口"分层；spec 跟上游各节**直接矛盾**才视为漂移。
 >

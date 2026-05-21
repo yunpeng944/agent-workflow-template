@@ -5,7 +5,7 @@
 ## 提议 spec 演进
 
 - **人贡献者**：直接编辑 git 文件 + 提 PR；CI 自动跑 `./tasks.sh validate`
-- **agent 贡献者**：同样路径——任何 agent（Claude Code / Codex CLI / 其他）都可以在 git 上 propose spec 改动，作者 review merge。**不要**通过 Notion / Obsidian 等外部真源回流，那会绕过 PR review 并让 spec 演进失去 agent 协作通道
+- **agent 贡献者**：同样路径——任何 agent（Claude Code / Codex CLI / 其他）都可以在 git 上 propose spec 改动，作者 review merge
 
 ## 修 skill 真源
 
