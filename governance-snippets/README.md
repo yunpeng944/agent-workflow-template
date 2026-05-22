@@ -59,6 +59,8 @@ awk '/^─{3,}$/{f=!f;next} f' 03-rule-quality-criteria.md
 | 14   | [14-model-role-routing.md](14-model-role-routing.md)                       | AGENTS.md "最小流程" 后                                | 模型角色路由：plan/review → Opus；implement/debug → Sonnet/Codex；subagent 写入白名单 |
 | 15   | [15-prune-signal-quarterly-audit.md](15-prune-signal-quarterly-audit.md)   | docs/agents-governance.md                              | 剪枝信号操作化（grep prune-candidate + 事件触发审计）                                 |
 
+> 04 已并入 13（三层边界）· 10 已并入 15（剪枝信号 + 触发审计）· 编号不重排以保历史引用稳定（见 commit `5232dd9`）。
+
 ## 哲学
 
 这些片段全部满足 **可执行 / 可判定 / 可快速定位** 三条标准（见 03-）。

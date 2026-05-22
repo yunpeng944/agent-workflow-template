@@ -27,6 +27,8 @@ Node 实现 `agents-md.config.json` 三个治理入口：
 | `mirrorRoots` | `string[]` | `[]` | skill 真源 → 镜像的目标根（`.claude/skills` / `.agents/skills`） |
 | `scanExcludeDirs` | `string[]` | `[]` | check_refs 扫描时跳过的目录（如 plan 目录） |
 
+> `sectionLineLimits` 阈值取当前节实际行数 + ~50% 余量，触阈是"拆分到 docs/"的信号、非硬上限。`intentionallyAbsentRefs` 用于 `{{契约真源}}` 等下游 fork 后才存在的占位符路径。
+
 ## 入口契约
 
 - 全部入口读 `AGENTS_MD_ROOT` env var（默认仓库根），cwd 不敏感

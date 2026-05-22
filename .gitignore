@@ -24,3 +24,6 @@ node_modules/
 
 # git worktree workspace（superpowers:using-git-worktrees 用）
 .worktrees/
+
+# codex CLI runtime scratch（跑任务时自建 session state）
+.codex/
