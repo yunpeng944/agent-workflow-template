@@ -10,7 +10,9 @@ user-invocable: true
 
 平行模式：两个 executor 对**同一任务**独立工作 → 当前 LLM 综合两份产物。
 
-**preset 语义**：`<v1>-<v2>` 指定两 executor，hyphen 分隔。默认 `claude-codex`。
+**preset 语义**（`<v1>-<v2>` **可省略**）：
+
+- `<v1>-<v2>`：两 executor，hyphen 分隔；省略时默认 `claude-codex`
 
 ## Orchestration
 

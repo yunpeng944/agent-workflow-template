@@ -31,6 +31,7 @@ cd my-project
 **接力模式**（一个模型编排，另一个执行）：
 
 ```
+/wf-relay <task>                                # 省略 executor → 默认 codex（Codex CLI 调时默认 claude）
 /wf-relay codex <task>                          # Claude 编排，Codex 执行
 /wf-relay codex @rules/security.md <task>       # 叠加安全规则
 /wf-relay codex @rules/base.md @rules/refactor.md <task>  # 多规则
@@ -39,11 +40,13 @@ cd my-project
 **平行模式**（两模型独立做同一事，编排者综合）：
 
 ```
+/wf-parallel <task>                             # 省略 pair → 默认 claude-codex
 /wf-parallel claude-codex <task>                # 跨厂商双盲
 /wf-parallel claude-codex @rules/review.md <task>  # 叠加 review 规则
 ```
 
 `@rules/<file>.md` 由 host 原生处理，自动注入 prompt——不传则用 host 默认规则。
+`<executor>` / `<v1-v2>` 同样可省略——不传则用上方默认值。
 
 ### 3. Adapter 调度
 

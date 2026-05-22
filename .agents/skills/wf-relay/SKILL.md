@@ -12,7 +12,10 @@ user-invocable: true
 
 接力模式：当前 LLM 编排 → executor 执行 → 当前 LLM 核对 + 汇报。
 
-**preset 语义**：`<executor>` 指定执行者 vendor。编排者就是当前 LLM。默认 `codex`（若从 Codex CLI 调本 skill 则默认 `claude`）。
+**preset 语义**（`<executor>` **可省略**）：
+
+- `<executor>`：执行者 vendor；省略时默认 `codex`（本 skill 从 Codex CLI 调起则默认 `claude`）
+- 编排者：当前 LLM
 
 ## Orchestration
 
