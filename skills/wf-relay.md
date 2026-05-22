@@ -23,10 +23,10 @@ Vendor 字典：
 - `codex`：`codex exec <prompt>`
 - 新 vendor 接入：本表加一行。
 
-executor 调度优先级（CLI → host-specific subagent → fail-fast）：
+executor 调度优先级（host-specific subagent → CLI → fail-fast）：
 
-1. **CLI 子进程**：`codex exec "<prompt>"` / `claude -p "<prompt>"`（fresh session 天然独立）
-2. **Host-specific subagent**：仅当 host 装有对应机制时使用，仍需 fresh / isolated executor
+1. **Host-specific subagent**：host 原生 primitive（in-session 执行、共享 host tools / sandbox / 凭证、跨 host 一致性），保证 fresh / isolated executor
+2. **CLI 子进程**：`codex exec "<prompt>"` / `claude -p "<prompt>"`（OS-level fresh，host 无对应 subagent 时 fallback）
 3. **fail-fast**：CLI / 插件不可用、vendor key 未知、失败、超时或中断时，列出需要的入口和可用 vendor；不得降级到 manual paste 或当前模型模拟
 
 ## Stages

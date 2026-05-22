@@ -26,9 +26,11 @@ Vendor 字典：
 
 两路 **平行** dispatch（**不串行**——避免 A 输出污染 B prompt）：
 
-- v1 executor：按优先级 CLI 子进程 → host-specific subagent → fail-fast
+- v1 executor：host-specific subagent → CLI 子进程 → fail-fast
 - v2 executor：同上换 vendor
 - 两路 prompt **字符级一致**
+
+调度顺序理由：host-specific subagent 是 host 原生 primitive（in-session 执行、共享 host tools / sandbox / 凭证、跨 host 一致性）；CLI 子进程是 fallback（OS-level fresh，host 无对应 subagent 时启用）。两者都保证 fresh / isolated executor。
 
 调度 fail-fast 条件：CLI / 插件不可用、vendor key 未知、失败、超时或中断；必须列出需要的入口和可用 vendor，不得降级到 manual paste 或当前模型模拟。
 
@@ -47,6 +49,7 @@ Vendor 字典：
 - 任务描述
 - 输出格式要求（明示要什么：hypothesis / diff / 数据 / 评分）
 - **agent 视角约束**：若评估对象是 agent 消费的内容（skill / rule / AGENTS.md / docs / 治理文档），fixture 必须显式列 agent 视角问题（lazy loading 下的 context cost / grep target 发现路径 / 实际执行触发场景 / 跨场景消费方式），否则两路 + 编排者会默认滑向 maintainer 视角（文档美学 / 维护成本 / 决策时序），错过真实受众的工作流
+- **选项描述中立性**：fixture 列候选选项时，每个选项的「理由 / 风险」描述必须中立 —— 不允许把单一论据（如 cost / convenience / 计费）当作选项的**唯一**理由，也不允许在「风险」位置写未经核实的事实断言（如「host X 无 Y 概念」），否则两路会被限定在 fixture 划定的论据空间和事实假设里，reconcile 失去独立挖论据的余地
 
 两路 executor 共用此 fixture。
 
