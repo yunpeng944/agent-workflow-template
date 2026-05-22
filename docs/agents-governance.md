@@ -3,7 +3,7 @@
 > 本文档定义**下游 fork 此模板后**何时与如何更新自家 AGENTS.md 与治理骨架。
 > 模板自身的最小治理（heading 锁定 / refs 校验 / skill mirror 漂移）由 [agents-md.config.json](../agents-md.config.json) + [adapters/README.md](../adapters/README.md) + 模板自家的 `./tasks.sh validate` 兜底。
 >
-> 本文档使用 `{{占位符}}` 风格，与 [governance-snippets/README.md](../governance-snippets/README.md) 「占位符约定」表对齐。模板自身具体命令是 `./tasks.sh validate` 等；下游 fork 后按自家栈替换占位符（如 `{{validate命令}}` → `pnpm validate` / `make test`）。模板自身**不引用**此文档作强制规则。
+> 本文档使用 `{{占位符}}` 风格，与 [governance-snippets/README.md](../governance-snippets/README.md) 「占位符约定」表对齐。模板自身具体命令是 `./tasks.sh validate` 等；下游 fork 后按自家栈替换占位符（如 `{{validate命令}}` → `pnpm validate` / `make test`）。模板的**机械治理兜底**（heading 锁 / refs 校验 / mirror 漂移）不依赖本文档；但模板自家 AGENTS.md「自治维护」节在日常修补场景下**显式引用**本文件「维护责任」/「删除候选信号」/「剪枝信号」节作强制规则。下游 fork 后可按自家栈替换占位符或删除此引用。
 
 ## 何时更新 / 修补 AGENTS.md
 
@@ -135,7 +135,7 @@ checklist 只列类别，**不复制契约值**。详细字段以契约真源为
 
 > **真源**：本仓 `docs/agents-governance.md`（git 是 single source of truth）。spec 演进流程见根目录 `CONTRIBUTING.md`——agent 可直接提 PR / 作者 review merge。
 >
-> **与项目 `docs/agents-governance.md` 上游各节的分层关系**：本节是高层 SOP，覆盖完整场景；上半段是项目级入口与触发器。两节按"spec 覆盖完整场景 / 入口段保留项目特异性"分层；spec 跟上游各节**直接矛盾**（如同条触发条件两处列项不一致）才视为漂移，需修齐而非保留差异。
+> **与本文件上半段（§1 节前各节）的分层关系**：本节是高层 SOP，覆盖完整场景；上半段是项目级入口与触发器。两段按"spec 覆盖完整场景 / 入口段保留项目特异性"分层；spec 跟上半段**直接矛盾**（如同条触发条件两处列项不一致）才视为漂移，需修齐而非保留差异。
 >
 > **元规则**：本节是 agent 自治 bootstrap 的完整规范。结构：使用指南（三种场景的 launch prompt）→ Layer 1 执行卡片（agent 必读）→ Layer 2 设计原理（人类按需）→ Layer 3 评估附录（bootstrap 后自评）。
 
@@ -351,14 +351,7 @@ ETH Zurich SRI Lab（2026.02）研究发现：
 6. 关键规则应具备基本可验证性
 7. 治理不能只增不减 —— 每次更新同时检查是否有过时内容可删除或合并
 
-**删除候选信号**（定量补充原则 7）：满足任一条进入删除候选清单——
-
-- 同类问题已下沉到 lint / hook / harness / CI，prose 在文档层成了装饰
-- 规则引用的命令、路径、API、协议帧已废弃或重命名
-- 规则在重复其他文档或 harness（Claude Code / Codex CLI 等）默认行为，无项目特异约束
-- 模型审计时用 `git log --oneline -50` + `grep` 关键词无法找到近期代码 / 文档引用该规则的证据
-
-候选标记后，下次维护任务时按本节判据重新审计；仍命中则删除。项目级具体判据 + 触发式审计流程见本文件上方「剪枝信号」/「触发式审计」节。
+**原则 7 操作化**：完整的「删除候选信号」/「剪枝信号」/「触发式审计」三节判据见本文件上方对应节，此处不复述以避免漂移。
 
 #### §2.4 AGENTS.md 分层关系
 
