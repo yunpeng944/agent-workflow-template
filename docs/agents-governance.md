@@ -4,6 +4,8 @@
 > 模板自身的最小治理（heading 锁定 / refs 校验 / skill mirror 漂移）由 [agents-md.config.json](../agents-md.config.json) + [adapters/README.md](../adapters/README.md) + 模板自家的 `./tasks.sh validate` 兜底。
 >
 > 本文档使用 `{{占位符}}` 风格，与 [governance-snippets/README.md](../governance-snippets/README.md) 「占位符约定」表对齐。模板自身具体命令是 `./tasks.sh validate` 等；下游 fork 后按自家栈替换占位符（如 `{{validate命令}}` → `pnpm validate` / `make test`）。模板的**机械治理兜底**（heading 锁 / refs 校验 / mirror 漂移）不依赖本文档；但模板自家 AGENTS.md「自治维护」节在日常修补场景下**显式引用**本文件「维护责任」/「删除候选信号」/「剪枝信号」节作强制规则。下游 fork 后可按自家栈替换占位符或删除此引用。
+>
+> **设计选择**：业界对 AGENTS.md 写法存在「explicit 穷举所有 edge case」（Stack Overflow / Augment spec-driven）vs「minimal high-signal trust agent」（Anthropic context engineering）两种路径。本仓选后者 —— 假设下游用 Opus 4.7 / GPT-5.5 等强模型，无需 hand-holding 枚举。
 
 ## 何时更新 / 修补 AGENTS.md
 
@@ -341,6 +343,8 @@ ETH Zurich SRI Lab（2026.02）研究发现：
 
 参考：Anthropic "Measuring Agent Autonomy in Practice" (2026)、Swarmia "Five Levels of AI Agent Autonomy" (2026)
 
+> **注**：Anthropic 2026 paper 明示「autonomy is not a fixed property of a model... it's an emergent characteristic of a deployment, shaped by the model's behavior, the user's oversight strategy, and the product's design」。上方 Level 0-3 是**当前仓库状态**的快照，不是 model 能力分级；同一仓库在不同 oversight 策略下 autonomy 等级可不同。
+
 #### §2.3 治理原则
 
 1. 优先复用现有机制（README、docs、`AGENTS.md`、`.github/instructions`）
@@ -472,4 +476,4 @@ code_commits=$(git log --since="$(git log -1 --format=%ci AGENTS.md)" --oneline 
 - Addy Osmani — "Self-Improving Coding Agents" (2026)
 - Builder.io — "Improve Your AI Code Output with AGENTS.md" (2026)
 - OpenAI — "Custom Instructions with AGENTS.md" (Codex Docs)
-- AGENTS.md — Official Specification (Linux Foundation)
+- AGENTS.md — Linux Foundation Agentic AI Foundation (AAIF, 2025-12) — 与 MCP + Goose 同治理 / co-governed alongside MCP and Goose
