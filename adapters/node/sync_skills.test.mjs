@@ -142,7 +142,7 @@ test('sync_skills: rejects skill name not in kebab-case', () => {
   }
 });
 
-test('sync_skills: rejects skill without parseable frontmatter', () => {
+test('sync_skills: rejects skill missing frontmatter open marker', () => {
   const skill = '# Just markdown\n\nNo frontmatter at all\n';
   const { root, cleanup } = makeTmpRepo({
     config: { mirrorRoots: ['.claude/skills'] },
@@ -151,7 +151,22 @@ test('sync_skills: rejects skill without parseable frontmatter', () => {
   try {
     const r = runAdapter('sync_skills', root);
     assert.equal(r.status, 1);
-    assert.match(r.stderr, /name is required/);
+    assert.match(r.stderr, /missing frontmatter open marker/);
+  } finally {
+    cleanup();
+  }
+});
+
+test('sync_skills: rejects skill missing frontmatter close marker', () => {
+  const skill = '---\nname: my-skill\ndescription: x\n\nbody without close\n';
+  const { root, cleanup } = makeTmpRepo({
+    config: { mirrorRoots: ['.claude/skills'] },
+    files: { 'skills/my-skill.md': skill },
+  });
+  try {
+    const r = runAdapter('sync_skills', root);
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /missing frontmatter close marker/);
   } finally {
     cleanup();
   }

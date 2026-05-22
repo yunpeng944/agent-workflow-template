@@ -95,11 +95,11 @@ function readSkillSources(root) {
     const sourcePath = resolve(skillsDir, entry);
     const stem = basename(entry, '.md');
     const content = readFileSync(sourcePath, 'utf8');
+    const { frontmatterBlock, bodyContent } = extractFrontmatterBlock(sourceRelativePath, content);
     const parsed = parseFrontmatter(content);
 
     validateSkill(sourceRelativePath, stem, parsed.data);
 
-    const { frontmatterBlock, bodyContent } = extractFrontmatterBlock(sourceRelativePath, content);
     const body = normalizeBody(bodyContent);
     const generated = `${frontmatterBlock}\n\n${GENERATED_HEADER} ${sourceRelativePath} -->\n\n${body}\n`;
 
