@@ -17,17 +17,11 @@ user-invocable: true
 
 ## Orchestration
 
-Vendor 字典：
-
-- `claude`：`claude -p <prompt>`
-- `codex`：`codex exec <prompt>`
-- 新 vendor 接入：本表加一行。
-
 executor 调度优先级（host-specific subagent → CLI → fail-fast）：
 
 1. **Host-specific subagent**：host 原生 primitive（in-session 执行、共享 host tools / sandbox / 凭证、跨 host 一致性），保证 fresh / isolated executor
-2. **CLI 子进程**：`codex exec "<prompt>"` / `claude -p "<prompt>"`（OS-level fresh，host 无对应 subagent 时 fallback）
-3. **fail-fast**：CLI / 插件不可用、vendor key 未知、失败、超时或中断时，列出需要的入口和可用 vendor；不得降级到 manual paste 或当前模型模拟
+2. **CLI 子进程**：fresh OS-level executor —— agent 按 vendor 名查当前 host 上对应 CLI 入口（`which <vendor>` / `<vendor> --help` 自解析），保证 fresh / isolated executor
+3. **fail-fast**：subagent 与 CLI 均不可用、vendor 无解析、失败、超时或中断 → 列出需要的入口与可用 vendor，不得降级到 manual paste 或当前模型模拟
 
 ## Stages
 

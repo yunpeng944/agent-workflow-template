@@ -18,23 +18,18 @@ user-invocable: true
 
 ## Orchestration
 
-Vendor 字典：
+executor 调度优先级（host-specific subagent → CLI → fail-fast）：
 
-- `claude`：`claude -p <prompt>`
-- `codex`：`codex exec <prompt>`
-- 新 vendor 接入：本表加一行。
-
-`claude-claude` / `codex-codex` 触发**同 vendor 警告**："两份产物 blind spot 高度相似，跨厂商多样性丢失"。不阻塞，但鼓励切换到不同 vendor pair。
+1. **Host-specific subagent**：host 原生 primitive（in-session、共享 host tools / sandbox / 凭证、跨 host 一致性），保证 fresh / isolated executor
+2. **CLI 子进程**：fresh OS-level executor —— agent 按 vendor 名查当前 host 上对应 CLI 入口（`which <vendor>` / `<vendor> --help` 自解析），保证 fresh / isolated executor
+3. **fail-fast**：两路均不可用、vendor 无解析、失败、超时或中断 → 列出需要的入口与可用 vendor，不得降级到 manual paste 或当前模型模拟
 
 两路 **平行** dispatch（**不串行**——避免 A 输出污染 B prompt）：
 
-- v1 executor：host-specific subagent → CLI 子进程 → fail-fast
-- v2 executor：同上换 vendor
+- v1 / v2 各按上述优先级 dispatch（换 vendor）
 - 两路 prompt **字符级一致**
 
-调度顺序理由：host-specific subagent 是 host 原生 primitive（in-session 执行、共享 host tools / sandbox / 凭证、跨 host 一致性）；CLI 子进程是 fallback（OS-level fresh，host 无对应 subagent 时启用）。两者都保证 fresh / isolated executor。
-
-调度 fail-fast 条件：CLI / 插件不可用、vendor key 未知、失败、超时或中断；必须列出需要的入口和可用 vendor，不得降级到 manual paste 或当前模型模拟。
+跨厂商多样性：同 vendor pair（`claude-claude` / `codex-codex`）触发警告（两份产物 blind spot 相似），不阻塞但鼓励切换。
 
 ## Worktree
 
