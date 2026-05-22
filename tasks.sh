@@ -5,14 +5,15 @@
 #   ./tasks.sh <target>
 #
 # Target:
-#   validate            check-structure + check-refs + sync-skills-check
+#   validate            test + check-structure + check-refs + sync-skills-check
+#   test                run adapter unit tests (node --test, zero-dep)
 #   check-structure     AGENTS.md heading / line-budget lint
 #   check-refs          markdown path-ref existence
 #   sync-skills         regenerate .claude/skills + .agents/skills mirrors
 #   sync-skills-check   verify mirrors are in sync (no write)
 #   help                show this help
 #
-# 行为契约见 adapters/README.md；wf-* skill 选择见 docs/workflows.md。
+# 行为契约见 adapters/README.md；wf-* skill 真源见 skills/。
 
 set -euo pipefail
 
@@ -32,14 +33,15 @@ agent-workflow-template — 调度脚本（zero-dep POSIX bash · 直调 Node la
   ./tasks.sh <target>
 
 Target:
-  validate            check-structure + check-refs + sync-skills-check
+  validate            test + check-structure + check-refs + sync-skills-check
+  test                run adapter unit tests (node --test, zero-dep)
   check-structure     AGENTS.md heading / line-budget lint
   check-refs          markdown path-ref existence
   sync-skills         regenerate .claude/skills + .agents/skills mirrors
   sync-skills-check   verify mirrors are in sync (no write)
   help                show this help
 
-行为契约见 adapters/README.md；wf-* skill 选择见 docs/workflows.md。
+行为契约见 adapters/README.md；wf-* skill 真源见 skills/。
 EOF
     ;;
   check-structure)
@@ -54,7 +56,11 @@ EOF
   sync-skills-check)
     "$NODE" adapters/node/sync_skills.mjs --check
     ;;
+  test)
+    "$NODE" --test adapters/node/*.test.mjs
+    ;;
   validate)
+    "$NODE" --test adapters/node/*.test.mjs
     "$NODE" adapters/node/check_structure.mjs
     "$NODE" adapters/node/check_refs.mjs
     "$NODE" adapters/node/sync_skills.mjs --check
