@@ -48,6 +48,7 @@ Vendor 字典：
 
 - 任务描述
 - 输出格式要求（明示要什么：hypothesis / diff / 数据 / 评分）
+- **agent 视角约束**：若评估对象是 agent 消费的内容（skill / rule / AGENTS.md / docs / 治理文档），fixture 必须显式列 agent 视角问题（lazy loading 下的 context cost / grep target 发现路径 / 实际执行触发场景 / 跨场景消费方式），否则两路 + 编排者会默认滑向 maintainer 视角（文档美学 / 维护成本 / 决策时序），错过真实受众的工作流
 
 两路 executor 共用此 fixture。
 
@@ -68,6 +69,7 @@ Vendor 字典：
 
 - 不引入两边都没提的新结论
 - 分歧必给仲裁，不允许"双方都有道理"
+- **视角自检**：评估 agent-facing 内容时检查两路论据 —— 若双方都只用 maintainer 视角（文档美学 / 维护成本 / 决策时序），标 `BOTH-MAINTAINER-VIEW` 并附 agent 视角（lazy loading / grep target / 实际触发）重新评估，再给最终结论
 
 ## Stop
 
