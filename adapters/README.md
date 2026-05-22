@@ -3,7 +3,7 @@
 Node 实现 `agents-md.config.json` 三个治理入口：
 
 - `check_structure.mjs` — AGENTS.md 二级标题集合与顺序 + 各节行数上限校验
-- `check_refs.mjs` — AGENTS.md / README.md / docs/**.md 内 markdown link 路径存在性校验
+- `check_refs.mjs` — AGENTS.md / README.md / docs/**.md 内反引号 + markdown link 路径存在性校验
 - `sync_skills.mjs` — `skills/<name>.md` 真源 → `.claude/skills/` + `.agents/skills/` 双镜像同步
 
 ## 运行环境

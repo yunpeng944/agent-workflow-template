@@ -381,7 +381,7 @@ ETH Zurich SRI Lab（2026.02）研究发现：
 
 #### §2.7 自动化验证建议（可选）
 
-> **下游参考 vs 本仓真源**：以下 bash 脚本为**下游 fork 参考实现**（POSIX bash + grep，不依赖任何运行时栈）。**本仓自家真源是 Node adapter**——由 `./tasks.sh validate` 调度的 `adapters/node/check_refs.mjs`（markdown link 存活）+ `adapters/node/check_structure.mjs`（AGENTS.md 章节 / 行预算）+ `adapters/node/sync_skills.mjs`（skill 镜像漂移）。下游有 Node 20.11+ 环境时优先复用 Node adapter；无 Node 则参考下方 bash 脚本自实现。
+> **下游参考 vs 本仓真源**：以下 bash 脚本为**下游 fork 参考实现**（POSIX bash + grep，不依赖任何运行时栈）。**本仓自家真源是 Node adapter**——由 `./tasks.sh validate` 调度的 `adapters/node/check_refs.mjs`（反引号 + markdown link 存活）+ `adapters/node/check_structure.mjs`（AGENTS.md 章节 / 行预算）+ `adapters/node/sync_skills.mjs`（skill 镜像漂移）。下游有 Node 20.11+ 环境时优先复用 Node adapter；无 Node 则参考下方 bash 脚本自实现。
 
 建议将以下检查加入 CI 或验证流程：
 
