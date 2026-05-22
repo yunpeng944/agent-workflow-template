@@ -9,7 +9,6 @@
 | [skills/](skills/)                     | 2 个 user-invocable workflow skill：`wf-relay`（接力）+ `wf-parallel`（平行）|
 | [rules/](rules/)                       | 可选的任务规则文件（base / security / refactor / review / research / debug）        |
 | [adapters/](adapters/)                 | 治理 config 的 Node adapter 实现（消费 `agents-md.config.json`）                    |
-| [docs/workflows.md](docs/workflows.md) | 多模型调度核心（vendor 字典 / 调度优先级 / 跨厂商警告 / fail-fast）                 |
 
 ## 用法
 
@@ -18,10 +17,14 @@
 ```bash
 git clone <this-repo> my-project
 cd my-project
-./tasks.sh sync-skills     # 首次必跑：生成 .claude/skills/ + .agents/skills/ 镜像
 ```
 
-镜像首生成后即应 `git add` 入仓（Claude Code / Codex CLI 直接读镜像）。
+镜像已随模板入仓（Claude Code / Codex CLI 直接读镜像），首次 clone 后无需立即跑。
+只有修改 `skills/<name>.md` 真源后才需要：
+
+```bash
+./tasks.sh sync-skills     # 修 skill 真源后重生镜像
+```
 
 ### 2. 调用 workflow
 

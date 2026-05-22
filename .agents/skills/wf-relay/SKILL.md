@@ -16,11 +16,17 @@ user-invocable: true
 
 ## Orchestration
 
-executor 调度优先级：
+Vendor 字典：
+
+- `claude`：`claude -p <prompt>`
+- `codex`：`codex exec <prompt>`
+- 新 vendor 接入：本表加一行。
+
+executor 调度优先级（CLI → host-specific subagent → fail-fast）：
 
 1. **CLI 子进程**：`codex exec "<prompt>"` / `claude -p "<prompt>"`（fresh session 天然独立）
-2. **Host subagent**：Claude Code `Agent(subagent_type="codex:codex-rescue" | "general-purpose")`
-3. **fail-fast**：报错列需要的 CLI / 插件
+2. **Host-specific subagent**：仅当 host 装有对应机制时使用，仍需 fresh / isolated executor
+3. **fail-fast**：CLI / 插件不可用、vendor key 未知、失败、超时或中断时，列出需要的入口和可用 vendor；不得降级到 manual paste 或当前模型模拟
 
 ## Stages
 
@@ -53,4 +59,10 @@ executor 按 Stage 1 prompt 工作，返回完整结果。
 
 ## 失败处理
 
-executor 不可用 / 失败 / 超时 → **fail-fast 不模拟**——明示"executor unavailable"，不得编排者自己冒充 executor 产物。
+executor 不可用 / 失败 / 超时 / 中断 → **fail-fast 不模拟**——明示"executor unavailable"，不得编排者自己冒充 executor 产物。
+
+失败模式：
+
+- 没真实 dispatch 就写"它的意见" → 必须 fail-fast 或明确标缺失角色
+- vendor key 不在字典就静默 fallback → 必须 fail-fast 并列出可用 vendor
+- executor 失败后伪造产物 → 必须 fail-fast 明示，不模拟

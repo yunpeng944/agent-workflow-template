@@ -1,6 +1,6 @@
 # 仓库指南（模板）
 
-> **元规则**：本仓是 `agent-workflow-template` —— 一个**不绑语言 / 不绑栈**的多模型协作工作流脚手架。本文件只列模板自身的稳定元规则、边界与入口。**下游 fork 后**：在「项目特定规则」节追加你自家的契约 / 模块 / CLI / 高风险面规则；保留 skills/ rules/ adapters/ docs/workflows.md 四必带不动。
+> **元规则**：本仓是 `agent-workflow-template` —— 一个**不绑语言 / 不绑栈**的多模型协作工作流脚手架。本文件只列模板自身的稳定元规则、边界与入口。**下游 fork 后**：在「项目特定规则」节追加你自家的契约 / 模块 / CLI / 高风险面规则；保留 skills/ rules/ adapters/ 三必带不动。
 
 ## 项目目标
 
@@ -10,13 +10,12 @@
 - 可选任务规则在 `rules/`（base / security / refactor / review / research / debug）
 - 同一份治理 config 由 Node adapter 消费，在 `adapters/`（需 Node 20.11+，仅 stdlib）
 - 顶层 `tasks.sh` 调度（POSIX bash），`./tasks.sh validate` 收口
-- 多模型调度核心：[docs/workflows.md](docs/workflows.md)
 
 **贡献流程**：见 [CONTRIBUTING.md](CONTRIBUTING.md) ——git 是 spec 真源，人 + agent 都走 PR。
 
 ## 优先做什么
 
-- **任何修改前**：判断是改「模板自身」（skills/ rules/ adapters/ docs/workflows.md）还是「项目特定规则」。模板自身改动要保持语言中性 / 仅依赖 Node 20.11+ stdlib（无 npm install）
+- **任何修改前**：判断是改「模板自身」（skills/ rules/ adapters/）还是「项目特定规则」。模板自身改动要保持语言中性 / 仅依赖 Node 20.11+ stdlib（无 npm install）
 - **修 skill 真源后**：必须跑 `./tasks.sh sync-skills` 重生 `.claude/skills/` 与 `.agents/skills/` 镜像；同 commit 提交真源 + 两份镜像
 - **修 `agents-md.config.json` / adapter 契约**：按 [adapters/README.md](adapters/README.md)「变更治理」节同步各 lane 实现
 - **任务收口**：跑 `./tasks.sh validate`
@@ -53,7 +52,6 @@
 - skill 真源（编辑只动这里）：[skills/](skills/) 下 `wf-relay.md` / `wf-parallel.md`
 - 镜像（generated · 勿改）：`.claude/skills/wf-*/SKILL.md` · `.agents/skills/wf-*/SKILL.md`
 - 可选规则：[rules/](rules/) 下 6 个任务规则文件
-- 多模型调度核心 / vendor 字典 / 调度优先级：[docs/workflows.md](docs/workflows.md)
 
 ## Adapter 调度
 
@@ -76,7 +74,7 @@
 
 ## 快速定位
 
-- **模板真源**：[skills/](skills/) · [rules/](rules/) · [adapters/](adapters/) · [docs/workflows.md](docs/workflows.md) · [agents-md.config.json](agents-md.config.json) · [tasks.sh](tasks.sh)
+- **模板真源**：[skills/](skills/) · [rules/](rules/) · [adapters/](adapters/) · [agents-md.config.json](agents-md.config.json) · [tasks.sh](tasks.sh)
 - **镜像（generated）**：`.claude/skills/` · `.agents/skills/`
 - **可粘贴素材**：[governance-snippets/](governance-snippets/)（13 段治理片段）· [prompts/](prompts/)（3 个 external paste 模板）
 - **下游治理基线**：[docs/agents-governance.md](docs/agents-governance.md) · [docs/development-conventions.md](docs/development-conventions.md)

@@ -46,5 +46,5 @@ Format guidelines:
 
 These are skill-level concerns, not rules:
 - Stage topology (PLANNER → IMPLEMENTER → REVIEWER) — that's in `skills/wf-*.md`
-- Multi-model dispatch mechanics — see `docs/workflows.md`
+- Multi-model dispatch mechanics — see `skills/wf-*.md`
 - Project-specific contracts / paths / commands — those go in AGENTS.md

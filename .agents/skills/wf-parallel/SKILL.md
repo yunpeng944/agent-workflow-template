@@ -12,15 +12,31 @@ user-invocable: true
 
 平行模式：两个 executor 对**同一任务**独立工作 → 当前 LLM 综合两份产物。
 
-**preset 语义**：`<v1>-<v2>` 指定两 executor，hyphen 分隔。默认 `claude-codex`。`claude-claude` / `codex-codex` 触发**同 vendor 警告**（两份 blind spot 高度相似，跨厂商多样性丢失），不阻塞。
+**preset 语义**：`<v1>-<v2>` 指定两 executor，hyphen 分隔。默认 `claude-codex`。
 
 ## Orchestration
 
+Vendor 字典：
+
+- `claude`：`claude -p <prompt>`
+- `codex`：`codex exec <prompt>`
+- 新 vendor 接入：本表加一行。
+
+`claude-claude` / `codex-codex` 触发**同 vendor 警告**："两份产物 blind spot 高度相似，跨厂商多样性丢失"。不阻塞，但鼓励切换到不同 vendor pair。
+
 两路 **平行** dispatch（**不串行**——避免 A 输出污染 B prompt）：
 
-- v1 executor：`claude -p` / `codex exec` 或对应 Agent tool
+- v1 executor：按优先级 CLI 子进程 → host-specific subagent → fail-fast
 - v2 executor：同上换 vendor
 - 两路 prompt **字符级一致**
+
+调度 fail-fast 条件：CLI / 插件不可用、vendor key 未知、失败、超时或中断；必须列出需要的入口和可用 vendor，不得降级到 manual paste 或当前模型模拟。
+
+## Worktree
+
+- 两路被要求**落地代码**（写工作区文件）时：编排者必须先为每路 `git worktree add /tmp/wt-<run-id>-<vendor>` 隔离并在对应 worktree dispatch，避免同时写同一文件 race
+- 两路仅输出**建议**（hypothesis / diff suggestion / 报告 / 评分）时：不需要 worktree
+- 编排者负责判断本次任务属于哪种态
 
 ## Stages
 
@@ -63,3 +79,10 @@ reconciled 报告完整 + 所有分歧已仲裁 + dispatch ledger 含两 vendor 
 - (b) abort
 
 默认 (a)。
+
+失败模式：
+
+- 没真实 dispatch 就写"它的意见" → 必须 fail-fast 或明确标缺失角色
+- vendor key 不在字典就静默 fallback → 必须 fail-fast 并列出可用 vendor
+- executor 失败后伪造产物 → 必须 fail-fast 明示，不模拟
+- 同 vendor 跑 parallel 不警告 → 丢失跨厂商多样性，warning 必打
