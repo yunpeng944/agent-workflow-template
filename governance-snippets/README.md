@@ -58,6 +58,10 @@ awk '/^─{3,}$/{f=!f;next} f' 03-rule-quality-criteria.md
 | 13   | [13-three-tier-boundaries.md](13-three-tier-boundaries.md)                 | AGENTS.md "任务分流" 前                                | 三层边界：始终 / 先问后做 / 禁止（简单配对的进阶）                                    |
 | 14   | [14-model-role-routing.md](14-model-role-routing.md)                       | AGENTS.md "最小流程" 后                                | 模型角色路由：plan/review → Opus；implement/debug → Sonnet/Codex；subagent 写入白名单 |
 | 15   | [15-prune-signal-quarterly-audit.md](15-prune-signal-quarterly-audit.md)   | docs/agents-governance.md                              | 剪枝信号操作化（grep prune-candidate + 事件触发审计）                                 |
+| 16   | [16-claude-code-hooks.md](16-claude-code-hooks.md)                         | .claude/settings.json                                  | Claude Code PreToolUse / Stop hooks 拦危险路径 + 保护 generated 镜像                  |
+| 17   | [17-codex-cli-hooks.md](17-codex-cli-hooks.md)                             | ~/.codex/config.toml / .codex/config.toml              | Codex CLI hooks 注入确定性脚本（pre_tool_use / stop）                                 |
+| 18   | [18-claude-permissions-readonly.md](18-claude-permissions-readonly.md)     | .claude/settings.json                                  | Claude Code permissions deny/ask/allow 三档 + readonly profile                        |
+| 19   | [19-codex-config-readonly.md](19-codex-config-readonly.md)                 | ~/.codex/config.toml / .codex/config.toml              | Codex sandbox 三档 + approval 三档 + readonly profile                                 |
 
 > 04 已并入 13（三层边界）· 10 已并入 15（剪枝信号 + 触发审计）· 编号不重排以保历史引用稳定（见 commit `5232dd9`）。
 
