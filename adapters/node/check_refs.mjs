@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 扫描 AGENTS.md / README.md / docs/**.md 中反引号内与 Markdown link 内的文件路径引用，报告不存在的路径。
+ * 扫描 scanMarkdownRoots 配置的 .md 文件 / 目录中反引号内与 Markdown link 内的文件路径引用，报告不存在的路径。
  * 只检查含 "/" 的引用（完整路径），跳过裸文件名、glob 模式和模板占位符。
  */
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
@@ -18,6 +18,7 @@ const RUNTIME_PREFIXES = CONFIG.runtimePrefixes ?? [];
 const GENERATED_PREFIXES = CONFIG.generatedPrefixes ?? [];
 const INTENTIONALLY_ABSENT_REFS = new Set(CONFIG.intentionallyAbsentRefs ?? []);
 const SCAN_EXCLUDE_DIRS = CONFIG.scanExcludeDirs ?? [];
+const SCAN_MARKDOWN_ROOTS = CONFIG.scanMarkdownRoots ?? ['AGENTS.md', 'README.md', 'docs/'];
 
 function toUnixPath(path) {
   return path.split('\\').join('/');
@@ -89,12 +90,23 @@ function shouldCheckExistence(path) {
   return true;
 }
 
+function resolveScanTargets(root, scanRoots) {
+  const targets = [];
+  for (const entry of scanRoots) {
+    const abs = resolve(root, entry);
+    if (!existsSync(abs)) continue;
+    const st = statSync(abs);
+    if (st.isDirectory()) {
+      targets.push(...collectMarkdownFiles(root, abs));
+    } else if (st.isFile() && entry.endsWith('.md')) {
+      targets.push(abs);
+    }
+  }
+  return targets;
+}
+
 export function checkMarkdownRefs(root = process.cwd()) {
-  const markdownFiles = [
-    resolve(root, 'AGENTS.md'),
-    resolve(root, 'README.md'),
-    ...collectMarkdownFiles(root, resolve(root, 'docs')),
-  ].filter((filePath) => existsSync(filePath) && statSync(filePath).isFile());
+  const markdownFiles = resolveScanTargets(root, SCAN_MARKDOWN_ROOTS);
 
   /** 去重，保留每个路径最早出现的位置 */
   const unique = new Map();

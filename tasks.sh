@@ -33,10 +33,11 @@ agent-workflow-template — 调度脚本（zero-dep POSIX bash · 直调 Node la
   ./tasks.sh <target>
 
 Target:
-  validate            test + check-structure + check-refs + sync-skills-check
+  validate            test + check-structure + check-refs + check-skills + sync-skills-check
   test                run adapter unit tests (node --test, zero-dep)
   check-structure     AGENTS.md heading / line-budget lint
   check-refs          markdown path-ref existence
+  check-skills        wf-* skill invariants (fail-fast / fresh / 字符级一致 / 不读上游)
   sync-skills         regenerate .claude/skills + .agents/skills mirrors
   sync-skills-check   verify mirrors are in sync (no write)
   help                show this help
@@ -49,6 +50,9 @@ EOF
     ;;
   check-refs)
     "$NODE" adapters/node/check_refs.mjs
+    ;;
+  check-skills)
+    "$NODE" adapters/node/check_skills.mjs
     ;;
   sync-skills)
     "$NODE" adapters/node/sync_skills.mjs
@@ -63,6 +67,7 @@ EOF
     "$NODE" --test adapters/node/*.test.mjs
     "$NODE" adapters/node/check_structure.mjs
     "$NODE" adapters/node/check_refs.mjs
+    "$NODE" adapters/node/check_skills.mjs
     "$NODE" adapters/node/sync_skills.mjs --check
     echo "✓ ./tasks.sh validate passed"
     ;;
