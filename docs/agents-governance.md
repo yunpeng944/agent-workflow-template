@@ -94,17 +94,6 @@ checklist 只列类别，**不复制契约值**。详细字段以契约真源为
 
 模板抽取这套机制专为多项目复用：下游只需替换 `agents-md.config.json` 即可复用全部 lint / codegen 行为。adapter 行为契约的真源见 [adapters/README.md](../adapters/README.md)。
 
-## skill 修改流程
-
-`skills/<name>.md` 是 skill 模板真源，`.claude/skills/` 与 `.agents/skills/` 是生成产物（带 `<!-- generated · do not edit -->` 头注释）。修改步骤：
-
-1. 只改 `skills/<name>.md`（frontmatter：`name` + `description` 必填）。
-2. 跑 `{{sync命令}}` 重新生成两份镜像。
-3. `git add` 真源与两份镜像（**必须同提交**）。
-4. `{{validate命令}}` 会跑 `{{sync命令}} --check`，产物 ≠ 真源时退出码 ≠ 0。
-
-禁止：直接编辑 `.claude/skills/**` 或 `.agents/skills/**`；任何手改在下一次 `{{sync命令}}` 时被覆盖。
-
 ## 剪枝信号
 
 满足以下任一即将该规则标为 **剪枝候选**：

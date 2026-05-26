@@ -24,7 +24,6 @@
 
 **始终**：
 
-- 改 `skills/*.md` 真源后跑 `./tasks.sh sync-skills`，同 commit 提交镜像
 - 改 AGENTS.md 二级标题集合或顺序时同步 `agents-md.config.json` 的 `expectedHeadings`
 - 新增引用路径前确认文件存在，或显式加入 `intentionallyAbsentRefs` 白名单
 - 任务收口跑 `./tasks.sh validate`
@@ -49,9 +48,7 @@
 
 ## 工作流入口
 
-- skill 真源（编辑只动这里）：[skills/](skills/) 下 `wf-relay.md` / `wf-parallel.md`
-- 镜像（generated · 勿改）：`.claude/skills/wf-*/SKILL.md` · `.agents/skills/wf-*/SKILL.md`
-- 可选规则：[rules/](rules/) 下 6 个任务规则文件
+skill 真源 + 编辑流程见 [skills/README.md](skills/README.md)；镜像 `.claude/skills/` · `.agents/skills/` 勿改。可选规则在 [rules/](rules/)。
 
 ## Adapter 调度
 
