@@ -133,6 +133,23 @@ checklist 只列类别，**不复制契约值**。详细字段以契约真源为
 3. 同步：若变更触及契约或 `expectedHeadings`，按本文件相应 checklist 同步。
 4. 跑 `{{validate命令}}` 收口；commit message 用 `docs(governance): audit — <精简变更摘要>`（用于回溯算下次审计触发距离）。
 
+## 业界演进同步（drift-scan）
+
+跟随 Tier 1 厂商 doc + 跨厂商标准的 spec 演进。Agent 可触发，**不直接 modify 真源**。
+
+**触发**：距上次 `docs(governance): drift-scan` commit ≥ 50 项目 commit（cold start 按 90 天兜底）/ maintainer 显式触发 / `grep prune-candidate` ≥ 5 条
+
+**Agent 应做**：
+1. 查 [agent-autonomy-sources-tier.md](agent-autonomy-sources-tier.md) Tier 1 最新内容（无 host-native web 工具 → 标 `NEEDS-EXTERNAL-RESEARCH` 由 maintainer 取）
+2. 整理「Source URL + 引文 + 现状 + diff + 冲突 source（若有）」清单
+3. **展示清单 + 等 host-native 显式确认**（AskUserQuestion / 显示 diff 等用户回 yes/no / 等价物），不假设 approval
+4. 逐条 approve 后落地：Edit → sync-skills（如改 skill）→ `./tasks.sh validate` → commit
+5. 完成用 `docs(governance): drift-scan — <摘要>` 标记
+
+**Agent 不应做**：基于 Tier 3 单一来源改动（必须 ≥ 1 Tier 1/2 cross-check）/ 只引一家 Tier 1（Anthropic + OpenAI 必须并列防营销偏向）/ 超 maintainer 显式范围
+
+**自维护**：本节自身随 `docs(governance): drift-scan` commit 修订；候选剪枝信号见上方「剪枝信号」节
+
 ## Bootstrap Spec
 
 > **真源**：本仓 `docs/agents-governance.md`（git 是 single source of truth）。spec 演进流程见根目录 `CONTRIBUTING.md`——agent 可直接提 PR / 作者 review merge。
