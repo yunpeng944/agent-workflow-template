@@ -50,7 +50,7 @@ executor 调度优先级（host-specific subagent → CLI → fail-fast）：
 
 ### Stage 2 — 平行 dispatch（fresh executors）
 
-同时派两路（**禁止串行**——B dispatch 时 A 输出不可见），prompt 字符级一致——以 fixture SHA 校验。
+同时派两路（**禁止串行**——B dispatch 时 A 输出不可见），prompt 字符级一致（orchestrator 可选 `sha256sum` 自核对，模板不强制）。
 
 ### Stage 3 — Reconcile（当前 LLM）
 
@@ -59,7 +59,7 @@ executor 调度优先级（host-specific subagent → CLI → fail-fast）：
 1. **共识**：两边都说的——cite 双方一致点
 2. **分歧**：A 说 X / B 说 Y——每条必给仲裁：`KEEP-A` / `KEEP-B` / `双方都不对` / `需要更多证据`
 3. **盲区**：A 没看 / B 没看的方向——不允许填"无"（至少标"双方覆盖相似，无显式遗漏"）
-4. 输出 reconciled 报告 + dispatch ledger（含 fixture SHA + 两 vendor status）
+4. 输出 reconciled 报告 + dispatch ledger（含两 vendor status + 实际访问的外部 URL + 实际读的仓内文件）
 
 约束：
 
@@ -69,7 +69,7 @@ executor 调度优先级（host-specific subagent → CLI → fail-fast）：
 
 ## Stop
 
-reconciled 报告完整 + 所有分歧已仲裁 + dispatch ledger 含两 vendor 真实状态 + fixture SHA 一致性。
+reconciled 报告完整 + 所有分歧已仲裁 + dispatch ledger 含两 vendor 真实状态。
 
 ## 失败处理
 
