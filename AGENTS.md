@@ -77,11 +77,11 @@
 - **模板真源**：[skills/](skills/) · [rules/](rules/) · [adapters/](adapters/) · [agents-md.config.json](agents-md.config.json) · [tasks.sh](tasks.sh)
 - **镜像（generated）**：`.claude/skills/` · `.agents/skills/`
 - **可粘贴素材**：[governance-snippets/](governance-snippets/)（13 段治理片段）· [prompts/](prompts/)（3 个 external paste 模板）
-- **下游治理基线**：[docs/agents-governance.md](docs/agents-governance.md) · [docs/development-conventions.md](docs/development-conventions.md)
+- **下游治理基线**：[docs/agents-governance.md](docs/agents-governance.md) · [docs/bootstrap-spec.md](docs/bootstrap-spec.md) · [docs/development-conventions.md](docs/development-conventions.md)
 - **验证入口**：`./tasks.sh sync-skills`（修 skill 后必跑）· `./tasks.sh validate`（收口）
 - **下游用法**：[README.md](README.md)
 
 ## 自治维护
 
-治理细节、失效信号、修补 vs Bootstrap 判别、剪枝信号、触发式审计见 [docs/agents-governance.md](docs/agents-governance.md)。Agent 自行做日常修补（最小必要范围），完整 Bootstrap 需人工触发。
+治理细节、失效信号、修补 vs Bootstrap 判别、剪枝信号、触发式审计、业界演进同步 (drift-scan) 见 [docs/agents-governance.md](docs/agents-governance.md)；完整 Bootstrap SOP 见 [docs/bootstrap-spec.md](docs/bootstrap-spec.md)。Agent 自行做日常修补（最小必要范围），完整 Bootstrap 需人工触发。
 做日常修补时，必须读 `docs/agents-governance.md`「维护责任」节 +「删除候选信号」/「剪枝信号」两节，顺手处理可删条目。
