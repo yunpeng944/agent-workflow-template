@@ -24,7 +24,7 @@
 阈值粗略量化（**由 maintainer 估算**，无 grep 工具兜底；机械化路径见下节「剪枝信号」+「触发式审计」）：
 
 - **日常修补**（agent 自行执行）：单条路径引用失效修掉、一条规则过时删掉、新增高频模块补一行导航、删除过时条目。
-- **完整 Bootstrap**（需人工触发，流程见独立 [bootstrap-spec.md](bootstrap-spec.md)）：项目架构结构性变化、主要技术栈切换、AGENTS.md > 30% 路径引用失效、最近 10 次 agent 任务中 > 3 次需人工补同类背景、新团队成员（人或 agent）首次接触仓库。
+- **完整 Bootstrap**（人工触发）：触发条件 + 流程见 [bootstrap-spec.md](bootstrap-spec.md) §1.6。
 
 ## 维护责任
 
