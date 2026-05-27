@@ -1,6 +1,8 @@
 # 仓库指南（模板）
 
 > **元规则**：本仓是 `agent-workflow-template` —— 一个**不绑语言 / 不绑栈**的多模型协作工作流脚手架。本文件只列模板自身的稳定元规则、边界与入口。**下游 fork 后**：在「项目特定规则」节追加你自家的契约 / 模块 / CLI / 高风险面规则；保留 skills/ rules/ adapters/ 三必带不动。
+>
+> **能力假设**：本文件假定 agent 为前沿 thinking model（Claude Opus 4.x / GPT-5.x 或同档及以上）。已内化的 SE 常识（TDD、强类型、模块化、结构化错误、Conventional Commits、PR 礼仪、git rebase 语义、长 ctx 懒加载）默认成立，本文件只列项目特异的约束、入口与边界。若使用更弱模型（如 haiku / gpt-4o-mini），需补充 procedural 指引或用 skill 触发执行。
 
 ## 项目目标
 
@@ -63,8 +65,6 @@ skill 真源 + 编辑流程见 [skills/README.md](skills/README.md)；镜像 `.c
 >
 > 建议涵盖：契约真源指针 / 高风险文件 / CLI 命令面 / 状态文件 / 跨端边界 / 凭证策略 / 自家 lint 与 typecheck 命令 / CI 入口
 >
-> **填料速成**：[governance-snippets/](governance-snippets/) 内若干段治理片段，按需 paste + 替换占位符
->
 > **任务规则**：常用任务约束写到 [rules/](rules/)，调用时用 `@rules/<name>.md` 叠加到 skill
 
 （模板默认为空；保留本节标题不要删 —— `agents-md.config.json.expectedHeadings` 依赖）
@@ -73,12 +73,12 @@ skill 真源 + 编辑流程见 [skills/README.md](skills/README.md)；镜像 `.c
 
 - **模板真源**：[skills/](skills/) · [rules/](rules/) · [adapters/](adapters/) · [agents-md.config.json](agents-md.config.json) · [tasks.sh](tasks.sh)
 - **镜像（generated）**：`.claude/skills/` · `.agents/skills/`
-- **可粘贴素材**：[governance-snippets/](governance-snippets/)（若干段治理片段）· [prompts/](prompts/)（3 个 external paste 模板）
+- **可粘贴素材**：[prompts/](prompts/)（3 个 external paste 模板）
 - **下游治理基线**：[docs/agents-governance.md](docs/agents-governance.md) · [docs/bootstrap-spec.md](docs/bootstrap-spec.md) · [docs/development-conventions.md](docs/development-conventions.md)
 - **验证入口**：`./tasks.sh sync-skills`（修 skill 后必跑）· `./tasks.sh validate`（收口）
 - **下游用法**：[README.md](README.md)
 
 ## 自治维护
 
-治理细节、失效信号、修补 vs Bootstrap 判别、剪枝信号、触发式审计、业界演进同步 (drift-scan) 见 [docs/agents-governance.md](docs/agents-governance.md)；完整 Bootstrap SOP 见 [docs/bootstrap-spec.md](docs/bootstrap-spec.md)；逐条治理细则（17 段合集，曾为 paste-only snippets，现已合并自动生效）见 [docs/agents-governance-guide.md](docs/agents-governance-guide.md)。Agent 自行做日常修补（最小必要范围），完整 Bootstrap 需人工触发。
+治理细节、失效信号、修补 vs Bootstrap 判别、剪枝信号、触发式审计、业界演进同步 (drift-scan) 见 [docs/agents-governance.md](docs/agents-governance.md)；完整 Bootstrap SOP 见 [docs/bootstrap-spec.md](docs/bootstrap-spec.md)。Agent 自行做日常修补（最小必要范围），完整 Bootstrap 需人工触发。
 做日常修补时，必须读 `docs/agents-governance.md`「维护责任」节 +「删除候选信号」/「剪枝信号」两节，顺手处理可删条目。

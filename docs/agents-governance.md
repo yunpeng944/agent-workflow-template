@@ -3,7 +3,7 @@
 > 本文档定义**下游 fork 此模板后**何时与如何更新自家 AGENTS.md 与治理骨架。
 > 模板自身的最小治理（heading 锁定 / refs 校验 / skill mirror 漂移）由 [agents-md.config.json](../agents-md.config.json) + [adapters/README.md](../adapters/README.md) + 模板自家的 `./tasks.sh validate` 兜底。
 >
-> 本文档使用 `{{占位符}}` 风格，与 [governance-snippets/README.md](../governance-snippets/README.md) 「占位符约定」表对齐。模板自身具体命令是 `./tasks.sh validate` 等；下游 fork 后按自家栈替换占位符（如 `{{validate命令}}` → `pnpm validate` / `make test`）。模板的**机械治理兜底**（heading 锁 / refs 校验 / mirror 漂移）不依赖本文档；但模板自家 AGENTS.md「自治维护」节在日常修补场景下**显式引用**本文件「维护责任」/「删除候选信号」/「剪枝信号」节作强制规则。下游 fork 后可按自家栈替换占位符或删除此引用。
+> 本文档使用 `{{占位符}}` 风格（如 `{{validate命令}}` → `pnpm validate` / `make test`）。模板自身具体命令是 `./tasks.sh validate` 等；下游 fork 后按自家栈替换。模板的**机械治理兜底**（heading 锁 / refs 校验 / mirror 漂移）不依赖本文档；但模板自家 AGENTS.md「自治维护」节在日常修补场景下**显式引用**本文件「维护责任」/「删除候选信号」/「剪枝信号」节作强制规则。下游 fork 后可按自家栈替换占位符或删除此引用。
 >
 > **设计选择**：业界对 AGENTS.md 写法存在「explicit 穷举所有 edge case」（Stack Overflow / Augment spec-driven）vs「minimal high-signal trust agent」（Anthropic context engineering）两种路径。本仓选后者 —— 假设下游用 Opus 4.7 / GPT-5.5 等强模型，无需 hand-holding 枚举。
 

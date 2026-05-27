@@ -64,7 +64,7 @@ cd my-project
 1. **AGENTS.md「项目特定规则」节**：契约真源 / 高风险文件 / CLI 命令面 / 自家 lint 命令 / 凭证策略 / CI 入口。**不要动**模板自身其他节（标题集合由 [agents-md.config.json](agents-md.config.json) `expectedHeadings` 锁定）
 2. **新建 `rules/<name>.md`**：按 [rules/README.md](rules/README.md) 格式，覆盖你常用的任务类型——以后用 `/wf-relay codex @rules/<name>.md <task>` 调用
 
-**填料速成**：[governance-snippets/](governance-snippets/) 内若干段治理片段，挑相关的 paste 到 AGENTS.md。
+**追加规则**：直接在 AGENTS.md「项目特定规则」节按需写入；或新建 `rules/<name>.md` 供 skill 调用。
 
 ### 5. external paste 模板（人 → AI 交接）
 

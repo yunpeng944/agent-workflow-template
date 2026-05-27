@@ -4,7 +4,7 @@
 >
 > 下游 fork 模板后可直接采纳本文，或挑相关节 paste 到自家 `docs/`。模板自身**不引用**此文档作强制规则；模板的核心治理由 AGENTS.md + [adapters/README.md](../adapters/README.md) + 模板自家的 `./tasks.sh validate` 兜底。
 >
-> 占位符 `{{...}}` 与 [governance-snippets/README.md](../governance-snippets/README.md) 「占位符约定」表对齐，下游按自家栈替换（如 `{{validate命令}}` → `pnpm validate` / `make test`）。
+> 占位符 `{{...}}` 由下游按自家栈替换（如 `{{validate命令}}` → `pnpm validate` / `make test`）。
 
 ## TDD 判定
 

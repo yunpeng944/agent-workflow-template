@@ -28,17 +28,12 @@
     "adapters/",
     "docs/",
     "prompts/",
-    "governance-snippets/",
     ".claude/",
     ".agents/"
   ],
   "runtimePrefixes": [],
   "generatedPrefixes": [],
-  "intentionallyAbsentRefs": [
-    "docs/development.md",
-    "docs/15-prune-signal-quarterly-audit.md",
-    "docs/<dir>/AGENTS.md"
-  ],
+  "intentionallyAbsentRefs": [],
   "mirrorRoots": [".claude/skills", ".agents/skills"],
   "scanExcludeDirs": ["docs/superpowers/plans"],
   "scanMarkdownRoots": ["AGENTS.md", "README.md", "docs/", "skills/", "rules/", "prompts/"],
