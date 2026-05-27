@@ -80,5 +80,5 @@ skill 真源 + 编辑流程见 [skills/README.md](skills/README.md)；镜像 `.c
 
 ## 自治维护
 
-治理细节、失效信号、修补 vs Bootstrap 判别、剪枝信号、触发式审计、业界演进同步 (drift-scan) 见 [docs/agents-governance.md](docs/agents-governance.md)；完整 Bootstrap SOP 见 [docs/bootstrap-spec.md](docs/bootstrap-spec.md)。Agent 自行做日常修补（最小必要范围），完整 Bootstrap 需人工触发。
+治理细节、失效信号、修补 vs Bootstrap 判别、剪枝信号、触发式审计、业界演进同步 (drift-scan) 见 [docs/agents-governance.md](docs/agents-governance.md)；完整 Bootstrap SOP 见 [docs/bootstrap-spec.md](docs/bootstrap-spec.md)；逐条治理细则（17 段合集，曾为 paste-only snippets，现已合并自动生效）见 [docs/agents-governance-guide.md](docs/agents-governance-guide.md)。Agent 自行做日常修补（最小必要范围），完整 Bootstrap 需人工触发。
 做日常修补时，必须读 `docs/agents-governance.md`「维护责任」节 +「删除候选信号」/「剪枝信号」两节，顺手处理可删条目。
