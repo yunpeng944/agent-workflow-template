@@ -36,7 +36,7 @@
   "scanExcludeDirs": ["docs/superpowers/plans"],
   "scanMarkdownRoots": ["AGENTS.md", "README.md", "docs/", "skills/", "rules/", "prompts/"],
   "skillInvariants": {
-    "wf-relay": ["fail-fast", "fresh", "Executor 不读编排者的中间思考"],
+    "wf-orchestrate": ["fail-fast", "fresh", "Executor 不读编排者的中间思考"],
     "wf-parallel": ["fail-fast", "fresh", "字符级一致", "禁止串行"]
   }
 }

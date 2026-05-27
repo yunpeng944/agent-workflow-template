@@ -4,7 +4,7 @@
 
 `skills/` 是 Claude Code 与 OpenAI Codex 使用的 user-invocable workflow skill 真源。当前 2 个：
 
-- **`wf-relay`** — 接力模式：当前 LLM 编排 + dispatch executor 执行 + 当前 LLM 核对汇报
+- **`wf-orchestrate`** — 编排模式：当前 LLM 计划 + 拆分判别 → N 个 fresh executor 执行（N=1 接力 / N>1 fan-out 自动判）+ 当前 LLM 汇总 review
 - **`wf-parallel`** — 平行模式：两个 executor 独立做同一任务 + 当前 LLM 综合两份产物
 
 运行时镜像位置是 `.claude/skills/`（Claude Code 消费）与 `.agents/skills/`（Codex CLI 消费）。
@@ -12,14 +12,14 @@
 ## 调用
 
 ```
-/wf-relay [executor] <prompt>
+/wf-orchestrate [executor] <prompt>
 /wf-parallel [v1-v2] <prompt>
 ```
 
 可选叠加规则文件（host 原生处理，skill 不需特殊解析）：
 
 ```
-/wf-relay codex @rules/security.md <task>
+/wf-orchestrate codex @rules/security.md <task>
 /wf-parallel claude-codex @rules/base.md @rules/review.md <task>
 ```
 
@@ -35,7 +35,7 @@
 
 ## 添加新 skill
 
-按 [skills/wf-relay.md](wf-relay.md) 或 [skills/wf-parallel.md](wf-parallel.md) 的格式起新文件。frontmatter 必含 `name` + `description`（"Use when..." 格式）+ `argument-hint`。
+按 [skills/wf-orchestrate.md](wf-orchestrate.md) 或 [skills/wf-parallel.md](wf-parallel.md) 的格式起新文件。frontmatter 必含 `name` + `description`（"Use when..." 格式）+ `argument-hint`。
 
 ## 与 `prompts/` 和 `rules/` 的区别
 

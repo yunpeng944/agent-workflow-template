@@ -1,9 +1,9 @@
-# Rules — Optional Task Constraints for wf-relay / wf-parallel
+# Rules — Optional Task Constraints for wf-orchestrate / wf-parallel
 
-This directory holds optional rule files you can attach to `/wf-relay` or `/wf-parallel` invocations via the `@` syntax:
+This directory holds optional rule files you can attach to `/wf-orchestrate` or `/wf-parallel` invocations via the `@` syntax:
 
 ```
-/wf-relay codex @rules/security.md <task>
+/wf-orchestrate codex @rules/security.md <task>
 /wf-parallel claude-codex @rules/review.md <task>
 ```
 
@@ -25,7 +25,7 @@ The host (Claude Code / Codex CLI) reads the file natively and includes its cont
 Stack multiple rules with multiple `@` references:
 
 ```
-/wf-relay codex @rules/base.md @rules/security.md <task>
+/wf-orchestrate codex @rules/base.md @rules/security.md <task>
 ```
 
 Each rule file is self-contained and explicitly references base.md when applicable—so stacking won't cause contradictions, but the executor will see all rules concatenated.

@@ -50,4 +50,4 @@ description: <≤500 chars>
 <skill body>
 ```
 
-首行必须是 `---`（Anthropic SKILL.md spec 硬约束）。`name` 字段必须 kebab-case 且等于源文件 stem（如 `skills/wf-relay.md` → `name: wf-relay`）。
+首行必须是 `---`（Anthropic SKILL.md spec 硬约束）。`name` 字段必须 kebab-case 且等于源文件 stem（如 `skills/wf-orchestrate.md` → `name: wf-orchestrate`）。

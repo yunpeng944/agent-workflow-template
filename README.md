@@ -6,7 +6,7 @@
 
 | 目录 / 文件                            | 作用                                                                                 |
 | -------------------------------------- | ------------------------------------------------------------------------------------ |
-| [skills/](skills/)                     | 2 个 user-invocable workflow skill：`wf-relay`（接力）+ `wf-parallel`（平行）|
+| [skills/](skills/)                     | 2 个 user-invocable workflow skill：`wf-orchestrate`（编排 1:N）+ `wf-parallel`（双盲对比）|
 | [rules/](rules/)                       | 可选的任务规则文件（base / security / refactor / review / research / debug）        |
 | [adapters/](adapters/)                 | 治理 config 的 Node adapter 实现（消费 `agents-md.config.json`）                    |
 
@@ -28,13 +28,13 @@ cd my-project
 
 ### 2. 调用 workflow
 
-**接力模式**（一个模型编排，另一个执行）：
+**编排模式**（N=1 接力 / N>1 fan-out，A 自动判）：
 
 ```
-/wf-relay <task>                                # 省略 executor → 默认 codex（Codex CLI 调时默认 claude）
-/wf-relay codex <task>                          # Claude 编排，Codex 执行
-/wf-relay codex @rules/security.md <task>       # 叠加安全规则
-/wf-relay codex @rules/base.md @rules/refactor.md <task>  # 多规则
+/wf-orchestrate <task>                                # 省略 executor → 调用方反义默认（Claude 调时默认 codex）
+/wf-orchestrate codex <task>                          # Claude 编排，N 由 A 自动判（1=接力 / >1=fan-out）
+/wf-orchestrate codex @rules/security.md <task>       # 叠加安全规则
+/wf-orchestrate codex @rules/base.md @rules/refactor.md <task>  # 多规则
 ```
 
 **平行模式**（两模型独立做同一事，编排者综合）：
@@ -62,7 +62,7 @@ cd my-project
 两种方式：
 
 1. **AGENTS.md「项目特定规则」节**：契约真源 / 高风险文件 / CLI 命令面 / 自家 lint 命令 / 凭证策略 / CI 入口。**不要动**模板自身其他节（标题集合由 [agents-md.config.json](agents-md.config.json) `expectedHeadings` 锁定）
-2. **新建 `rules/<name>.md`**：按 [rules/README.md](rules/README.md) 格式，覆盖你常用的任务类型——以后用 `/wf-relay codex @rules/<name>.md <task>` 调用
+2. **新建 `rules/<name>.md`**：按 [rules/README.md](rules/README.md) 格式，覆盖你常用的任务类型——以后用 `/wf-orchestrate codex @rules/<name>.md <task>` 调用
 
 **追加规则**：直接在 AGENTS.md「项目特定规则」节按需写入；或新建 `rules/<name>.md` 供 skill 调用。
 
@@ -76,7 +76,7 @@ cd my-project
 - **真源单点**：skill 真源在 `skills/`，镜像 generated；治理规则在 `agents-md.config.json`，adapter 是消费者
 - **可执行契约**：[adapters/README.md](adapters/README.md) 定义 adapter 的 MUST 行为
 - **下游可覆盖**：[AGENTS.md](AGENTS.md) 提供「项目特定规则」占位节
-- **规则 vs 编排分离**：skill 只管编排骨架（relay / parallel），具体任务约束写在 `rules/`，互相独立演化
+- **规则 vs 编排分离**：skill 只管编排骨架（orchestrate / parallel），具体任务约束写在 `rules/`，互相独立演化
 
 ## Contributing
 

@@ -8,7 +8,7 @@
 
 让 Claude / Codex / GPT 等模型按你的指挥协作完成任务，从某个具体项目抽出来做成任何项目都能复用的底座：
 
-- 2 个 user-invocable skill 在 `skills/`（真源单点）：`wf-relay` 接力 / `wf-parallel` 平行
+- 2 个 user-invocable skill 在 `skills/`（真源单点）：`wf-orchestrate` 编排（A 计划 → N 个 B 执行 → A review，N 自动判）/ `wf-parallel` 双盲对比
 - 可选任务规则在 `rules/`（base / security / refactor / review / research / debug）
 - 同一份治理 config 由 Node adapter 消费，在 `adapters/`（需 Node 20.11+，仅 stdlib）
 - 顶层 `tasks.sh` 调度（POSIX bash），`./tasks.sh validate` 收口
@@ -43,8 +43,8 @@
 
 ## 最小流程
 
-1. 选 workflow：`wf-relay`（接力）或 `wf-parallel`（平行）—— 见 [skills/README.md](skills/README.md)
-2. 调用：`/wf-relay [executor] [@rules/<name>.md] <task>` 或 `/wf-parallel [v1-v2] [@rules/<name>.md] <task>`
+1. 选 workflow：`wf-orchestrate`（编排：1=接力 / >1=fan-out，A 自动判）或 `wf-parallel`（双盲对比）—— 见 [skills/README.md](skills/README.md)
+2. 调用：`/wf-orchestrate [executor] [@rules/<name>.md] <task>` 或 `/wf-parallel [v1-v2] [@rules/<name>.md] <task>`
 3. 模板自身变更：改源 → `./tasks.sh sync-skills`（如改 skill）→ `./tasks.sh validate` → commit
 4. 下游项目变更：按下游自家 AGENTS.md「项目特定规则」节流程走
 
