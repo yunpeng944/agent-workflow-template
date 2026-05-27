@@ -1,4 +1,5 @@
 # 16 · Claude Code hooks（PreToolUse 机械边界）
+<!-- prune-candidate: 加入时 refs=0，无下游实证 · 2026-05-27 -->
 
 **何时用**：项目用 Claude Code，需要在 prose 规则之外加机械兜底——拦危险 Bash、保护 generated 镜像、Stop 时强制验证。
 **占位符**：`{{validate命令}}`（按项目替换，如 `./tasks.sh validate` / `pnpm validate`）；`{{generated前缀}}`（如 `.claude/skills/` `.agents/skills/`）。

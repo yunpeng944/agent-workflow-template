@@ -63,7 +63,7 @@ skill 真源 + 编辑流程见 [skills/README.md](skills/README.md)；镜像 `.c
 >
 > 建议涵盖：契约真源指针 / 高风险文件 / CLI 命令面 / 状态文件 / 跨端边界 / 凭证策略 / 自家 lint 与 typecheck 命令 / CI 入口
 >
-> **填料速成**：[governance-snippets/](governance-snippets/) 内 13 段治理片段，按需 paste + 替换占位符
+> **填料速成**：[governance-snippets/](governance-snippets/) 内若干段治理片段，按需 paste + 替换占位符
 >
 > **任务规则**：常用任务约束写到 [rules/](rules/)，调用时用 `@rules/<name>.md` 叠加到 skill
 
@@ -73,7 +73,7 @@ skill 真源 + 编辑流程见 [skills/README.md](skills/README.md)；镜像 `.c
 
 - **模板真源**：[skills/](skills/) · [rules/](rules/) · [adapters/](adapters/) · [agents-md.config.json](agents-md.config.json) · [tasks.sh](tasks.sh)
 - **镜像（generated）**：`.claude/skills/` · `.agents/skills/`
-- **可粘贴素材**：[governance-snippets/](governance-snippets/)（13 段治理片段）· [prompts/](prompts/)（3 个 external paste 模板）
+- **可粘贴素材**：[governance-snippets/](governance-snippets/)（若干段治理片段）· [prompts/](prompts/)（3 个 external paste 模板）
 - **下游治理基线**：[docs/agents-governance.md](docs/agents-governance.md) · [docs/bootstrap-spec.md](docs/bootstrap-spec.md) · [docs/development-conventions.md](docs/development-conventions.md)
 - **验证入口**：`./tasks.sh sync-skills`（修 skill 后必跑）· `./tasks.sh validate`（收口）
 - **下游用法**：[README.md](README.md)

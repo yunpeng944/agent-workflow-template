@@ -6,7 +6,7 @@
 > 不放计划文档、决策报告、临时笔记 —— 调研报告见 `docs/research-reports/`，完工 plan / proposal 归档见 `docs/archive/`。
 > Snippet 是设计期快照，**不与本仓 AGENTS.md 实时同步**；模板抽取（`agent-workflow-template`）时此目录是 source material。
 
-> 13 段项目无关、可直接 copy-paste 到任意项目 `AGENTS.md` / `CLAUDE.md` / `docs/*.md` 的治理片段。
+> 若干段项目无关、可直接 copy-paste 到任意项目 `AGENTS.md` / `CLAUDE.md` / `docs/*.md` 的治理片段。
 > 每个文件分三层：**何时用**（标题下） · **可直接复制的内容**（`---` 之间） · **来源 / 改写建议**（底部）。
 
 ## 使用方式

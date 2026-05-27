@@ -1,4 +1,5 @@
 # 17 · Codex CLI hooks（确定性脚本兜底）
+<!-- prune-candidate: 加入时 refs=0，无下游实证 · 2026-05-27 -->
 
 **何时用**：项目用 OpenAI Codex CLI，需要在 agentic loop 注入确定性脚本——密钥扫描、停止时验证、操作前权限检查。
 **占位符**：`{{validate命令}}`（按项目替换）；`{{repo_root}}`（仓库绝对路径）。

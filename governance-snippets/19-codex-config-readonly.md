@@ -1,4 +1,5 @@
 # 19 · Codex CLI sandbox + approval（readonly profile）
+<!-- prune-candidate: 加入时 refs=0，无下游实证 · 2026-05-27 -->
 
 **何时用**：项目用 OpenAI Codex CLI，希望对 agent 设最小权限基线（review / research / audit 任务限制为只读）；想用 sandbox 机械边界替代 prose 规则。
 **占位符**：`{{repo_root}}`（仓库绝对路径）。

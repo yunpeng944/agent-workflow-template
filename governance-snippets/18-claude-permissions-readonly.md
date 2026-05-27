@@ -1,4 +1,5 @@
 # 18 · Claude Code permissions（deny / ask / allow 三档）
+<!-- prune-candidate: 加入时 refs=0，无下游实证 · 2026-05-27 -->
 
 **何时用**：项目希望对 agent 工具调用配机械权限边界（不仅靠 prose 规则）；review / research 类任务想限制 agent 为只读。
 **占位符**：`{{generated前缀}}`（如 `.claude/skills/` / `.agents/skills/` / `dist/`）；`{{secret 路径}}`（如 `.env` / `secrets/`）。
